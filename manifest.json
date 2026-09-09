@@ -1,0 +1,12 @@
+{
+  "name": "Personal Travel Log",
+  "short_name": "Travel Log",
+  "description": "Aplikasi pencatatan perjalanan pribadi menggunakan barcode dan GPS",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f4f6",
+  "theme_color": "#111827",
+  "orientation": "portrait",
+  "lang": "id-ID"
+}

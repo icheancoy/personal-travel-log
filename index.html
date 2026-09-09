@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111827">
+    <meta name="description" content="Personal Travel Log - catatan perjalanan pribadi">
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+
+    <title>Personal Travel Log</title>
+</head>
+
+<body>
+    <div class="container">
+
+        <header>
+            <h1>Personal Travel Log</h1>
+            <p>Catatan perjalanan pribadi</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <h2>Barcode</h2>
+
+                <input
+                    id="barcode"
+                    type="text"
+                    placeholder="Barcode belum tersedia"
+                    readonly
+                >
+
+                <video
+                    id="barcodeVideo"
+                    class="barcode-video"
+                    autoplay
+                    muted
+                    playsinline
+                ></video>
+
+                <button id="scanButton" class="primary-button">
+                    SCAN BARCODE
+                </button>
+
+                <button
+                    id="stopScanButton"
+                    class="stop-button"
+                    style="display:none;"
+                >
+                    STOP SCANNER
+                </button>
+            </div>
+
+            <div class="card">
+                <h2>Lokasi</h2>
+
+                <div class="field">
+                    <label for="latitude">Latitude</label>
+                    <input id="latitude" type="text" readonly placeholder="-">
+                </div>
+
+                <div class="field">
+                    <label for="longitude">Longitude</label>
+                    <input id="longitude" type="text" readonly placeholder="-">
+                </div>
+
+                <div class="field">
+                    <label for="accuracy">Accuracy</label>
+                    <input id="accuracy" type="text" readonly placeholder="-">
+                </div>
+
+                <button id="locationButton" class="secondary-button">
+                    AMBIL LOKASI
+                </button>
+            </div>
+
+            <div class="card">
+                <h2>Waktu</h2>
+                <input
+                    id="timestamp"
+                    type="text"
+                    readonly
+                    placeholder="Waktu dibuat saat log disimpan"
+                >
+            </div>
+
+            <button id="saveButton" class="save-button">
+                SIMPAN LOG
+            </button>
+
+            <div id="status" class="status"></div>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/@zxing/browser@latest"></script>
+    <script src="app.js"></script>
+
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("./service-worker.js")
+                    .then(registration => {
+                        console.log("Service Worker aktif:", registration.scope);
+                    })
+                    .catch(error => {
+                        console.error("Service Worker gagal:", error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
