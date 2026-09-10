@@ -12,25 +12,25 @@
 
     <meta
         name="theme-color"
-        content="#0d6efd"
+        content="#2563eb"
     >
 
     <meta
         name="description"
-        content="Travel Log - Pencatatan lokasi perjalanan"
+        content="Travel Log Location Tracker"
     >
 
-    <link
-        rel="manifest"
-        href="manifest.json"
-    >
+    <title>Travel Log</title>
 
     <link
         rel="stylesheet"
         href="style.css"
     >
 
-    <title>Travel Log</title>
+    <link
+        rel="manifest"
+        href="manifest.json"
+    >
 
 </head>
 
@@ -41,122 +41,95 @@
 
         <div class="card">
 
-            <div class="header">
+            <h1>Travel Log</h1>
 
-                <h1>Travel Log</h1>
+            <p class="subtitle">
+                Catat lokasi perjalanan Anda
+            </p>
 
-                <p>
-                    Pencatatan lokasi perjalanan
-                </p>
 
+            <button
+                id="btnAmbilLokasi"
+                type="button"
+            >
+                AMBIL LOKASI
+            </button>
+
+
+            <div
+                id="status"
+                class="status status-idle"
+            >
+                Siap mengambil lokasi.
             </div>
 
 
-            <div class="content">
+            <div class="data">
 
-                <button
-                    type="button"
-                    id="btnAmbilLokasi"
-                    class="btn-location"
-                >
-                    AMBIL LOKASI
-                </button>
+                <div class="field">
 
-
-                <div
-                    id="status"
-                    class="status status-idle"
-                >
-                    Siap mengambil lokasi.
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="latitude">
+                    <label>
                         Latitude
                     </label>
 
                     <input
                         type="text"
                         id="latitude"
-                        placeholder="Belum tersedia"
                         readonly
+                        placeholder="-"
                     >
 
                 </div>
 
 
-                <div class="form-group">
+                <div class="field">
 
-                    <label for="longitude">
+                    <label>
                         Longitude
                     </label>
 
                     <input
                         type="text"
                         id="longitude"
-                        placeholder="Belum tersedia"
                         readonly
+                        placeholder="-"
                     >
 
                 </div>
 
 
-                <div class="form-group">
+                <div class="field">
 
-                    <label for="accuracy">
+                    <label>
                         Accuracy
                     </label>
 
                     <input
                         type="text"
                         id="accuracy"
-                        placeholder="Belum tersedia"
                         readonly
+                        placeholder="-"
                     >
 
                 </div>
 
 
-                <div class="form-group">
+                <div class="field">
 
-                    <label for="waktu">
+                    <label>
                         Waktu
                     </label>
 
                     <input
                         type="text"
                         id="waktu"
-                        placeholder="Belum tersedia"
                         readonly
+                        placeholder="-"
                     >
 
                 </div>
 
-
-                <div class="location-info">
-
-                    <strong>
-                        Informasi
-                    </strong>
-
-                    <p>
-                        Tekan tombol
-                        <b>AMBIL LOKASI</b>
-                        untuk mengambil posisi GPS perangkat.
-                    </p>
-
-                </div>
-
             </div>
-
-        </div>
-
-
-        <div class="footer">
-
-            Travel Log
 
         </div>
 
@@ -164,41 +137,6 @@
 
 
     <script src="script.js"></script>
-
-
-    <script>
-
-        if ("serviceWorker" in navigator) {
-
-            window.addEventListener(
-                "load",
-                function () {
-
-                    navigator.serviceWorker
-                        .register("service-worker.js")
-                        .then(function (registration) {
-
-                            console.log(
-                                "Service Worker berhasil:",
-                                registration.scope
-                            );
-
-                        })
-                        .catch(function (error) {
-
-                            console.error(
-                                "Service Worker gagal:",
-                                error
-                            );
-
-                        });
-
-                }
-            );
-
-        }
-
-    </script>
 
 </body>
 
