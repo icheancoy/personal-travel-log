@@ -17,16 +17,40 @@
 
     <meta
         name="description"
-        content="Travel Log Location Tracker"
+        content="Travel Log - Pencatatan lokasi perjalanan"
+    >
+
+    <meta
+        name="mobile-web-app-capable"
+        content="yes"
+    >
+
+    <meta
+        name="apple-mobile-web-app-capable"
+        content="yes"
+    >
+
+    <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="default"
+    >
+
+    <meta
+        name="apple-mobile-web-app-title"
+        content="Travel Log"
     >
 
     <title>Travel Log</title>
 
+
+    <!-- CSS -->
     <link
         rel="stylesheet"
         href="style.css"
     >
 
+
+    <!-- PWA Manifest -->
     <link
         rel="manifest"
         href="manifest.json"
@@ -37,16 +61,30 @@
 
 <body>
 
-    <div class="container">
+    <main class="container">
 
-        <div class="card">
+        <section class="card">
 
-            <h1>Travel Log</h1>
+            <!-- =====================================
+                 HEADER
+                 ===================================== -->
 
-            <p class="subtitle">
-                Catat lokasi perjalanan Anda
-            </p>
+            <div class="header">
 
+                <h1>
+                    Travel Log
+                </h1>
+
+                <p class="subtitle">
+                    Catat lokasi perjalanan Anda
+                </p>
+
+            </div>
+
+
+            <!-- =====================================
+                 BUTTON AMBIL LOKASI
+                 ===================================== -->
 
             <button
                 id="btnAmbilLokasi"
@@ -56,6 +94,10 @@
             </button>
 
 
+            <!-- =====================================
+                 STATUS
+                 ===================================== -->
+
             <div
                 id="status"
                 class="status status-idle"
@@ -64,17 +106,25 @@
             </div>
 
 
+            <!-- =====================================
+                 DATA LOKASI
+                 ===================================== -->
+
             <div class="data">
+
+
+                <!-- LATITUDE -->
 
                 <div class="field">
 
-                    <label>
+                    <label for="latitude">
                         Latitude
                     </label>
 
                     <input
                         type="text"
                         id="latitude"
+                        name="latitude"
                         readonly
                         placeholder="-"
                     >
@@ -82,15 +132,18 @@
                 </div>
 
 
+                <!-- LONGITUDE -->
+
                 <div class="field">
 
-                    <label>
+                    <label for="longitude">
                         Longitude
                     </label>
 
                     <input
                         type="text"
                         id="longitude"
+                        name="longitude"
                         readonly
                         placeholder="-"
                     >
@@ -98,15 +151,18 @@
                 </div>
 
 
+                <!-- ACCURACY -->
+
                 <div class="field">
 
-                    <label>
+                    <label for="accuracy">
                         Accuracy
                     </label>
 
                     <input
                         type="text"
                         id="accuracy"
+                        name="accuracy"
                         readonly
                         placeholder="-"
                     >
@@ -114,29 +170,132 @@
                 </div>
 
 
+                <!-- WAKTU -->
+
                 <div class="field">
 
-                    <label>
+                    <label for="waktu">
                         Waktu
                     </label>
 
                     <input
                         type="text"
                         id="waktu"
+                        name="waktu"
                         readonly
                         placeholder="-"
                     >
 
                 </div>
 
+
             </div>
 
-        </div>
 
-    </div>
+            <!-- =====================================
+                 INFORMASI
+                 ===================================== -->
+
+            <div class="info">
+
+                <p>
+                    Tekan tombol
+                    <strong>AMBIL LOKASI</strong>
+                    untuk mengambil koordinat GPS.
+                </p>
+
+                <p>
+                    Data yang disimpan:
+                </p>
+
+                <ul>
+
+                    <li>Timestamp</li>
+
+                    <li>Latitude</li>
+
+                    <li>Longitude</li>
+
+                    <li>Accuracy</li>
+
+                    <li>Waktu</li>
+
+                </ul>
+
+            </div>
 
 
-    <script src="script.js"></script>
+        </section>
+
+    </main>
+
+
+    <!-- =========================================
+         HIDDEN IFRAME
+         Digunakan oleh script.js untuk
+         mengirim GET request ke Google Apps Script
+         ========================================= -->
+
+    <iframe
+        name="googleScriptFrame"
+        id="googleScriptFrame"
+        style="display:none;"
+        title="Google Apps Script">
+    </iframe>
+
+
+    <!-- =========================================
+         JAVASCRIPT
+         ========================================= -->
+
+    <script
+        src="script.js">
+    </script>
+
+
+    <!-- =========================================
+         SERVICE WORKER
+         ========================================= -->
+
+    <script>
+
+        if ("serviceWorker" in navigator) {
+
+            window.addEventListener(
+                "load",
+                function () {
+
+                    navigator.serviceWorker
+                        .register(
+                            "./service-worker.js"
+                        )
+                        .then(
+                            function (registration) {
+
+                                console.log(
+                                    "Service Worker aktif:",
+                                    registration.scope
+                                );
+
+                            }
+                        )
+                        .catch(
+                            function (error) {
+
+                                console.error(
+                                    "Service Worker gagal:",
+                                    error
+                                );
+
+                            }
+                        );
+
+                }
+            );
+
+        }
+
+    </script>
 
 </body>
 
