@@ -20,26 +20,6 @@
         content="Travel Log - Pencatatan lokasi perjalanan"
     >
 
-    <meta
-        name="mobile-web-app-capable"
-        content="yes"
-    >
-
-    <meta
-        name="apple-mobile-web-app-capable"
-        content="yes"
-    >
-
-    <meta
-        name="apple-mobile-web-app-status-bar-style"
-        content="default"
-    >
-
-    <meta
-        name="apple-mobile-web-app-title"
-        content="Travel Log"
-    >
-
     <title>Travel Log</title>
 
 
@@ -48,23 +28,21 @@
         href="style.css"
     >
 
-
-    <link
-        rel="manifest"
-        href="manifest.json"
-    >
-
 </head>
 
 
 <body>
 
+
     <main class="container">
+
 
         <section class="card">
 
 
-            <!-- HEADER -->
+            <!-- =================================
+                 HEADER
+                 ================================= -->
 
             <div class="header">
 
@@ -79,7 +57,9 @@
             </div>
 
 
-            <!-- BUTTON -->
+            <!-- =================================
+                 BUTTON
+                 ================================= -->
 
             <button
                 id="btnAmbilLokasi"
@@ -89,7 +69,9 @@
             </button>
 
 
-            <!-- STATUS -->
+            <!-- =================================
+                 STATUS
+                 ================================= -->
 
             <div
                 id="status"
@@ -99,7 +81,9 @@
             </div>
 
 
-            <!-- DATA -->
+            <!-- =================================
+                 DATA GPS
+                 ================================= -->
 
             <div class="data">
 
@@ -179,106 +163,38 @@
             </div>
 
 
-            <!-- INFO -->
+            <!-- =================================
+                 INFORMASI
+                 ================================= -->
 
             <div class="info">
 
                 <p>
                     Tekan tombol
                     <strong>AMBIL LOKASI</strong>
-                    untuk mendapatkan koordinat GPS.
+                    untuk mendapatkan lokasi GPS.
                 </p>
 
                 <p>
-                    Data yang dikirim ke Google Spreadsheet:
+                    Data akan otomatis disimpan
+                    ke Google Spreadsheet.
                 </p>
-
-                <ul>
-
-                    <li>Timestamp</li>
-
-                    <li>Latitude</li>
-
-                    <li>Longitude</li>
-
-                    <li>Accuracy</li>
-
-                    <li>Waktu</li>
-
-                </ul>
 
             </div>
 
 
         </section>
 
+
     </main>
 
 
-    <!--
-        HIDDEN IFRAME
+    <!-- =====================================
+         JAVASCRIPT
+         ===================================== -->
 
-        Digunakan untuk mengirim
-        request GET ke Google Apps Script
-        tanpa meninggalkan halaman.
-    -->
+    <script src="script.js"></script>
 
-    <iframe
-        name="googleScriptFrame"
-        id="googleScriptFrame"
-        style="display:none;"
-        title="Google Apps Script">
-    </iframe>
-
-
-    <!-- JAVASCRIPT -->
-
-    <script
-        src="script.js">
-    </script>
-
-
-    <!-- SERVICE WORKER -->
-
-    <script>
-
-        if ("serviceWorker" in navigator) {
-
-            window.addEventListener(
-                "load",
-                function () {
-
-                    navigator.serviceWorker
-                        .register(
-                            "./service-worker.js"
-                        )
-                        .then(
-                            function (registration) {
-
-                                console.log(
-                                    "Service Worker aktif:",
-                                    registration.scope
-                                );
-
-                            }
-                        )
-                        .catch(
-                            function (error) {
-
-                                console.error(
-                                    "Service Worker error:",
-                                    error
-                                );
-
-                            }
-                        );
-
-                }
-            );
-
-        }
-
-    </script>
 
 </body>
 
