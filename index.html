@@ -43,14 +43,12 @@
     <title>Travel Log</title>
 
 
-    <!-- CSS -->
     <link
         rel="stylesheet"
         href="style.css"
     >
 
 
-    <!-- PWA Manifest -->
     <link
         rel="manifest"
         href="manifest.json"
@@ -65,9 +63,8 @@
 
         <section class="card">
 
-            <!-- =====================================
-                 HEADER
-                 ===================================== -->
+
+            <!-- HEADER -->
 
             <div class="header">
 
@@ -76,15 +73,13 @@
                 </h1>
 
                 <p class="subtitle">
-                    Catat lokasi perjalanan Anda
+                    Pencatatan lokasi perjalanan
                 </p>
 
             </div>
 
 
-            <!-- =====================================
-                 BUTTON AMBIL LOKASI
-                 ===================================== -->
+            <!-- BUTTON -->
 
             <button
                 id="btnAmbilLokasi"
@@ -94,9 +89,7 @@
             </button>
 
 
-            <!-- =====================================
-                 STATUS
-                 ===================================== -->
+            <!-- STATUS -->
 
             <div
                 id="status"
@@ -106,9 +99,7 @@
             </div>
 
 
-            <!-- =====================================
-                 DATA LOKASI
-                 ===================================== -->
+            <!-- DATA -->
 
             <div class="data">
 
@@ -124,7 +115,6 @@
                     <input
                         type="text"
                         id="latitude"
-                        name="latitude"
                         readonly
                         placeholder="-"
                     >
@@ -143,7 +133,6 @@
                     <input
                         type="text"
                         id="longitude"
-                        name="longitude"
                         readonly
                         placeholder="-"
                     >
@@ -162,7 +151,6 @@
                     <input
                         type="text"
                         id="accuracy"
-                        name="accuracy"
                         readonly
                         placeholder="-"
                     >
@@ -181,7 +169,6 @@
                     <input
                         type="text"
                         id="waktu"
-                        name="waktu"
                         readonly
                         placeholder="-"
                     >
@@ -192,20 +179,18 @@
             </div>
 
 
-            <!-- =====================================
-                 INFORMASI
-                 ===================================== -->
+            <!-- INFO -->
 
             <div class="info">
 
                 <p>
                     Tekan tombol
                     <strong>AMBIL LOKASI</strong>
-                    untuk mengambil koordinat GPS.
+                    untuk mendapatkan koordinat GPS.
                 </p>
 
                 <p>
-                    Data yang disimpan:
+                    Data yang dikirim ke Google Spreadsheet:
                 </p>
 
                 <ul>
@@ -230,11 +215,13 @@
     </main>
 
 
-    <!-- =========================================
-         HIDDEN IFRAME
-         Digunakan oleh script.js untuk
-         mengirim GET request ke Google Apps Script
-         ========================================= -->
+    <!--
+        HIDDEN IFRAME
+
+        Digunakan untuk mengirim
+        request GET ke Google Apps Script
+        tanpa meninggalkan halaman.
+    -->
 
     <iframe
         name="googleScriptFrame"
@@ -244,18 +231,14 @@
     </iframe>
 
 
-    <!-- =========================================
-         JAVASCRIPT
-         ========================================= -->
+    <!-- JAVASCRIPT -->
 
     <script
         src="script.js">
     </script>
 
 
-    <!-- =========================================
-         SERVICE WORKER
-         ========================================= -->
+    <!-- SERVICE WORKER -->
 
     <script>
 
@@ -283,7 +266,7 @@
                             function (error) {
 
                                 console.error(
-                                    "Service Worker gagal:",
+                                    "Service Worker error:",
                                     error
                                 );
 
