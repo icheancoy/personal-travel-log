@@ -4,6 +4,7 @@
 
 
 body {
+
     margin: 0;
 
     font-family:
@@ -14,10 +15,12 @@ body {
     background: #f1f5f9;
 
     color: #0f172a;
+
 }
 
 
 .container {
+
     min-height: 100vh;
 
     display: flex;
@@ -27,10 +30,12 @@ body {
     align-items: center;
 
     padding: 20px;
+
 }
 
 
 .card {
+
     width: 100%;
 
     max-width: 500px;
@@ -44,30 +49,43 @@ body {
     box-shadow:
         0 10px 30px
         rgba(0, 0, 0, 0.08);
+
+}
+
+
+.header {
+
+    margin-bottom: 25px;
+
 }
 
 
 h1 {
+
     margin: 0;
 
     text-align: center;
 
     font-size: 30px;
+
 }
 
 
 .subtitle {
+
     text-align: center;
 
     color: #64748b;
 
     margin-top: 8px;
 
-    margin-bottom: 25px;
+    margin-bottom: 0;
+
 }
 
 
 button {
+
     width: 100%;
 
     border: none;
@@ -85,22 +103,39 @@ button {
     background: #2563eb;
 
     color: white;
+
+    transition:
+        background 0.2s,
+        transform 0.1s;
+
 }
 
 
 button:hover {
+
     background: #1d4ed8;
+
+}
+
+
+button:active {
+
+    transform: scale(0.98);
+
 }
 
 
 button:disabled {
+
     background: #94a3b8;
 
     cursor: not-allowed;
+
 }
 
 
 .status {
+
     margin-top: 15px;
 
     padding: 12px;
@@ -110,48 +145,62 @@ button:disabled {
     text-align: center;
 
     font-size: 14px;
+
 }
 
 
 .status-idle {
+
     background: #f1f5f9;
 
     color: #475569;
+
 }
 
 
 .status-loading {
+
     background: #eff6ff;
 
     color: #1d4ed8;
+
 }
 
 
 .status-success {
+
     background: #ecfdf5;
 
     color: #047857;
+
 }
 
 
 .status-error {
+
     background: #fef2f2;
 
     color: #b91c1c;
+
 }
 
 
 .data {
+
     margin-top: 25px;
+
 }
 
 
 .field {
+
     margin-bottom: 15px;
+
 }
 
 
 label {
+
     display: block;
 
     margin-bottom: 6px;
@@ -161,10 +210,12 @@ label {
     font-weight: bold;
 
     color: #334155;
+
 }
 
 
 input {
+
     width: 100%;
 
     padding: 12px;
@@ -176,17 +227,70 @@ input {
     background: #f8fafc;
 
     font-size: 14px;
+
+}
+
+
+.info {
+
+    margin-top: 25px;
+
+    padding: 15px;
+
+    background: #f8fafc;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+
+    color: #475569;
+
+}
+
+
+.info p {
+
+    margin-top: 0;
+
+}
+
+
+.info ul {
+
+    margin-bottom: 0;
+
+    padding-left: 20px;
+
+}
+
+
+.info li {
+
+    margin-bottom: 5px;
+
 }
 
 
 @media (max-width: 480px) {
 
-    .card {
-        padding: 20px;
+    .container {
+
+        padding: 15px;
+
     }
 
+
+    .card {
+
+        padding: 20px;
+
+    }
+
+
     h1 {
+
         font-size: 26px;
+
     }
 
 }
