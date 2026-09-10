@@ -1,11 +1,12 @@
 {
-  "name": "Travel Log",
-  "short_name": "Travel Log",
-  "description": "Aplikasi pencatatan lokasi perjalanan",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#f1f5f9",
-  "theme_color": "#2563eb",
-  "orientation": "portrait",
-  "icons": []
+    "name": "Travel Log",
+    "short_name": "Travel Log",
+    "description": "Aplikasi pencatatan lokasi perjalanan",
+    "start_url": "./index.html",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#f1f5f9",
+    "theme_color": "#2563eb",
+    "orientation": "portrait",
+    "icons": []
 }
