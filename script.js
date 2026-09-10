@@ -11,10 +11,11 @@ document.addEventListener(
         "btnAmbilLokasi"
       );
 
+
     if (!button) {
 
       console.error(
-        "btnAmbilLokasi tidak ditemukan"
+        "Tombol tidak ditemukan"
       );
 
       return;
@@ -55,7 +56,9 @@ function ambilLokasi() {
   }
 
 
-  button.disabled = true;
+  button.disabled =
+    true;
+
 
   status.textContent =
     "Mengambil lokasi...";
@@ -68,11 +71,14 @@ function ambilLokasi() {
       const latitude =
         position.coords.latitude;
 
+
       const longitude =
         position.coords.longitude;
 
+
       const accuracy =
         position.coords.accuracy;
+
 
       const waktu =
         formatWaktu(
@@ -80,20 +86,44 @@ function ambilLokasi() {
         );
 
 
-      // =====================================
-      // TAMPILKAN DATA
-      // =====================================
+      console.log(
+        "LATITUDE:",
+        latitude
+      );
+
+
+      console.log(
+        "LONGITUDE:",
+        longitude
+      );
+
+
+      console.log(
+        "ACCURACY:",
+        accuracy
+      );
+
+
+      console.log(
+        "WAKTU:",
+        waktu
+      );
+
+
+      // ======================================
+      // TAMPILKAN KE WEB
+      // ======================================
 
       document.getElementById(
         "latitude"
       ).value =
-        latitude.toFixed(7);
+        latitude;
 
 
       document.getElementById(
         "longitude"
       ).value =
-        longitude.toFixed(7);
+        longitude;
 
 
       document.getElementById(
@@ -110,14 +140,14 @@ function ambilLokasi() {
 
 
       status.textContent =
-        "Lokasi diperoleh. Mengirim data...";
+        "Lokasi berhasil diperoleh. Menyimpan...";
 
 
-      // =====================================
+      // ======================================
       // KIRIM
-      // =====================================
+      // ======================================
 
-      kirimData(
+      kirimKeGoogleSheet(
         latitude,
         longitude,
         accuracy,
@@ -129,22 +159,63 @@ function ambilLokasi() {
 
     function (error) {
 
-      console.error(error);
+      console.error(
+        "GPS ERROR:",
+        error
+      );
 
 
-      status.textContent =
-        "Gagal mendapatkan lokasi.";
+      if (
+        error.code ===
+        error.PERMISSION_DENIED
+      ) {
+
+        status.textContent =
+          "Izin lokasi ditolak.";
+
+      }
+
+      else if (
+        error.code ===
+        error.POSITION_UNAVAILABLE
+      ) {
+
+        status.textContent =
+          "Lokasi tidak tersedia.";
+
+      }
+
+      else if (
+        error.code ===
+        error.TIMEOUT
+      ) {
+
+        status.textContent =
+          "GPS timeout.";
+
+      }
+
+      else {
+
+        status.textContent =
+          "Gagal mendapatkan lokasi.";
+
+      }
 
 
-      button.disabled = false;
+      button.disabled =
+        false;
 
     },
 
 
     {
       enableHighAccuracy: true,
+
       timeout: 30000,
+
       maximumAge: 0
+
     }
 
   );
@@ -152,95 +223,232 @@ function ambilLokasi() {
 }
 
 
-function kirimData(
+/**
+ * ==========================================
+ * KIRIM DATA DENGAN FORM GET
+ * ==========================================
+ */
+
+function kirimKeGoogleSheet(
   latitude,
   longitude,
   accuracy,
   waktu
 ) {
 
+  console.log(
+    "Mempersiapkan pengiriman..."
+  );
 
-  const url =
-    GOOGLE_SCRIPT_URL +
 
-    "?latitude=" +
-    encodeURIComponent(
-      latitude
-    ) +
+  /*
+   * Buat form HTML.
+   */
 
-    "&longitude=" +
-    encodeURIComponent(
-      longitude
-    ) +
-
-    "&accuracy=" +
-    encodeURIComponent(
-      accuracy
-    ) +
-
-    "&waktu=" +
-    encodeURIComponent(
-      waktu
+  const form =
+    document.createElement(
+      "form"
     );
+
+
+  form.method =
+    "GET";
+
+
+  form.action =
+    GOOGLE_SCRIPT_URL;
+
+
+  form.target =
+    "googleScriptFrame";
+
+
+  /*
+   * Latitude
+   */
+
+  const inputLatitude =
+    document.createElement(
+      "input"
+    );
+
+
+  inputLatitude.type =
+    "hidden";
+
+
+  inputLatitude.name =
+    "latitude";
+
+
+  inputLatitude.value =
+    latitude;
+
+
+  form.appendChild(
+    inputLatitude
+  );
+
+
+  /*
+   * Longitude
+   */
+
+  const inputLongitude =
+    document.createElement(
+      "input"
+    );
+
+
+  inputLongitude.type =
+    "hidden";
+
+
+  inputLongitude.name =
+    "longitude";
+
+
+  inputLongitude.value =
+    longitude;
+
+
+  form.appendChild(
+    inputLongitude
+  );
+
+
+  /*
+   * Accuracy
+   */
+
+  const inputAccuracy =
+    document.createElement(
+      "input"
+    );
+
+
+  inputAccuracy.type =
+    "hidden";
+
+
+  inputAccuracy.name =
+    "accuracy";
+
+
+  inputAccuracy.value =
+    accuracy;
+
+
+  form.appendChild(
+    inputAccuracy
+  );
+
+
+  /*
+   * Waktu
+   */
+
+  const inputWaktu =
+    document.createElement(
+      "input"
+    );
+
+
+  inputWaktu.type =
+    "hidden";
+
+
+  inputWaktu.name =
+    "waktu";
+
+
+  inputWaktu.value =
+    waktu;
+
+
+  form.appendChild(
+    inputWaktu
+  );
+
+
+  /*
+   * Masukkan form ke halaman
+   */
+
+  document.body.appendChild(
+    form
+  );
 
 
   console.log(
-    "URL Google Apps Script:"
+    "Mengirim form GET..."
   );
 
-  console.log(url);
 
+  console.log(
+    "Latitude:",
+    latitude
+  );
 
-  const status =
-    document.getElementById(
-      "status"
-    );
+  console.log(
+    "Longitude:",
+    longitude
+  );
+
+  console.log(
+    "Accuracy:",
+    accuracy
+  );
+
+  console.log(
+    "Waktu:",
+    waktu
+  );
 
 
   /*
-   * Buat iframe tersembunyi.
-   *
-   * Browser akan melakukan GET request
-   * langsung ke Apps Script.
+   * Kirim form
    */
 
-  const iframe =
-    document.createElement(
-      "iframe"
-    );
-
-
-  iframe.style.display =
-    "none";
-
-
-  iframe.src =
-    url;
-
-
-  document.body.appendChild(
-    iframe
-  );
+  form.submit();
 
 
   /*
-   * Jangan langsung menyatakan berhasil.
-   *
-   * Tunggu sebentar agar Apps Script
-   * mempunyai waktu untuk appendRow().
+   * Hapus form setelah submit
    */
 
   setTimeout(
     function () {
 
-      status.textContent =
-        "Data lokasi sudah dikirim.";
+      form.remove();
 
-      status.className =
+    },
+    3000
+  );
+
+
+  /*
+   * Tampilkan status
+   */
+
+  setTimeout(
+    function () {
+
+      document.getElementById(
+        "status"
+      ).textContent =
+        "Data lokasi berhasil dikirim.";
+
+      document.getElementById(
+        "status"
+      ).className =
         "status status-success";
 
 
-      buttonAktifkan();
+      document.getElementById(
+        "btnAmbilLokasi"
+      ).disabled =
+        false;
 
     },
     3000
@@ -249,22 +457,11 @@ function kirimData(
 }
 
 
-function buttonAktifkan() {
-
-  const button =
-    document.getElementById(
-      "btnAmbilLokasi"
-    );
-
-  if (button) {
-
-    button.disabled =
-      false;
-
-  }
-
-}
-
+/**
+ * ==========================================
+ * FORMAT WAKTU
+ * ==========================================
+ */
 
 function formatWaktu(timestamp) {
 
