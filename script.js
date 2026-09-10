@@ -5,7 +5,7 @@
  */
 
 const GOOGLE_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbzKgf_oH5Uc9WzrkTugYNjGaVwGujnlcAsL35m_cjcpltrHk0NumqgovIn7s6vM8dv8/exec";
+    "https://script.google.com/macros/s/AKfycbzex8Fm438xhtKQ-BtHqUBS4bEufrlf_PC4MLfAl99k7JW_-BdWLmrlW7PIr39J5Vg1/exec";
 
 
 /**
