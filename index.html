@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#0d6efd"
+    >
+
+    <meta
+        name="description"
+        content="Travel Log - Pencatatan lokasi perjalanan"
+    >
+
+    <link
+        rel="manifest"
+        href="manifest.json"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <title>Travel Log</title>
+
+</head>
+
+
+<body>
+
+    <div class="container">
+
+        <div class="card">
+
+            <div class="header">
+
+                <h1>Travel Log</h1>
+
+                <p>
+                    Pencatatan lokasi perjalanan
+                </p>
+
+            </div>
+
+
+            <div class="content">
+
+                <button
+                    type="button"
+                    id="btnAmbilLokasi"
+                    class="btn-location"
+                >
+                    AMBIL LOKASI
+                </button>
+
+
+                <div
+                    id="status"
+                    class="status status-idle"
+                >
+                    Siap mengambil lokasi.
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="latitude">
+                        Latitude
+                    </label>
+
+                    <input
+                        type="text"
+                        id="latitude"
+                        placeholder="Belum tersedia"
+                        readonly
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="longitude">
+                        Longitude
+                    </label>
+
+                    <input
+                        type="text"
+                        id="longitude"
+                        placeholder="Belum tersedia"
+                        readonly
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="accuracy">
+                        Accuracy
+                    </label>
+
+                    <input
+                        type="text"
+                        id="accuracy"
+                        placeholder="Belum tersedia"
+                        readonly
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="waktu">
+                        Waktu
+                    </label>
+
+                    <input
+                        type="text"
+                        id="waktu"
+                        placeholder="Belum tersedia"
+                        readonly
+                    >
+
+                </div>
+
+
+                <div class="location-info">
+
+                    <strong>
+                        Informasi
+                    </strong>
+
+                    <p>
+                        Tekan tombol
+                        <b>AMBIL LOKASI</b>
+                        untuk mengambil posisi GPS perangkat.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer">
+
+            Travel Log
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+
+    <script>
+
+        if ("serviceWorker" in navigator) {
+
+            window.addEventListener(
+                "load",
+                function () {
+
+                    navigator.serviceWorker
+                        .register("service-worker.js")
+                        .then(function (registration) {
+
+                            console.log(
+                                "Service Worker berhasil:",
+                                registration.scope
+                            );
+
+                        })
+                        .catch(function (error) {
+
+                            console.error(
+                                "Service Worker gagal:",
+                                error
+                            );
+
+                        });
+
+                }
+            );
+
+        }
+
+    </script>
+
+</body>
+
+</html>
