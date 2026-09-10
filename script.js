@@ -1,5 +1,5 @@
 const GOOGLE_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbxi5VRkmIWTsKyLhoqg4t6gpSvBwrqwY82i1OprwJ1w_Z/exec";
+    "https://script.google.com/macros/s/AKfycbxi5VRkmIWTsKyLhoqg4t6gpSvBwrqwY82i1OprwJ1w_Z/exec";
 
 
 let btnAmbilLokasi;
@@ -11,395 +11,390 @@ let statusElement;
 
 
 document.addEventListener(
-  "DOMContentLoaded",
-  function () {
+    "DOMContentLoaded",
+    function () {
 
-    btnAmbilLokasi =
-      document.getElementById(
-        "btnAmbilLokasi"
-      );
+        btnAmbilLokasi =
+            document.getElementById(
+                "btnAmbilLokasi"
+            );
 
-    latitudeInput =
-      document.getElementById(
-        "latitude"
-      );
+        latitudeInput =
+            document.getElementById(
+                "latitude"
+            );
 
-    longitudeInput =
-      document.getElementById(
-        "longitude"
-      );
+        longitudeInput =
+            document.getElementById(
+                "longitude"
+            );
 
-    accuracyInput =
-      document.getElementById(
-        "accuracy"
-      );
+        accuracyInput =
+            document.getElementById(
+                "accuracy"
+            );
 
-    waktuInput =
-      document.getElementById(
-        "waktu"
-      );
+        waktuInput =
+            document.getElementById(
+                "waktu"
+            );
 
-    statusElement =
-      document.getElementById(
-        "status"
-      );
+        statusElement =
+            document.getElementById(
+                "status"
+            );
 
 
-    if (!btnAmbilLokasi) {
+        btnAmbilLokasi.addEventListener(
+            "click",
+            ambilLokasi
+        );
 
-      console.error(
-        "Tombol AMBIL LOKASI tidak ditemukan."
-      );
-
-      return;
     }
-
-
-    btnAmbilLokasi.addEventListener(
-      "click",
-      ambilLokasi
-    );
-
-
-    setStatus(
-      "Siap mengambil lokasi.",
-      "idle"
-    );
-
-  }
 );
 
 
 /**
  * ==========================================
- * AMBIL LOKASI
+ * AMBIL LOKASI GPS
  * ==========================================
  */
+
 function ambilLokasi() {
 
-  console.log(
-    "AMBIL LOKASI diklik"
-  );
+    if (!navigator.geolocation) {
+
+        setStatus(
+            "Browser tidak mendukung GPS.",
+            "error"
+        );
+
+        return;
+
+    }
 
 
-  if (!navigator.geolocation) {
+    btnAmbilLokasi.disabled = true;
+
 
     setStatus(
-      "Browser tidak mendukung GPS.",
-      "error"
+        "Mengambil lokasi...",
+        "loading"
     );
 
-    return;
-  }
+
+    navigator.geolocation.getCurrentPosition(
+
+        function (position) {
+
+            const latitude =
+                position.coords.latitude;
 
 
-  btnAmbilLokasi.disabled = true;
+            const longitude =
+                position.coords.longitude;
 
 
-  setStatus(
-    "Mengambil lokasi...",
-    "loading"
-  );
+            const accuracy =
+                position.coords.accuracy;
 
 
-  navigator.geolocation.getCurrentPosition(
-
-    function (position) {
-
-      const latitude =
-        position.coords.latitude;
+            const waktu =
+                formatWaktu(
+                    position.timestamp
+                );
 
 
-      const longitude =
-        position.coords.longitude;
+            console.log(
+                "Latitude:",
+                latitude
+            );
 
 
-      const accuracy =
-        position.coords.accuracy;
+            console.log(
+                "Longitude:",
+                longitude
+            );
 
 
-      const waktu =
-        formatWaktu(
-          position.timestamp
+            console.log(
+                "Accuracy:",
+                accuracy
+            );
+
+
+            console.log(
+                "Waktu:",
+                waktu
+            );
+
+
+            // =================================
+            // TAMPILKAN DATA
+            // =================================
+
+            latitudeInput.value =
+                latitude.toFixed(7);
+
+
+            longitudeInput.value =
+                longitude.toFixed(7);
+
+
+            accuracyInput.value =
+                accuracy.toFixed(2) +
+                " meter";
+
+
+            waktuInput.value =
+                waktu;
+
+
+            setStatus(
+                "Lokasi diperoleh. Mengirim ke Spreadsheet...",
+                "loading"
+            );
+
+
+            // =================================
+            // KIRIM DATA
+            // =================================
+
+            kirimKeSpreadsheet(
+                latitude,
+                longitude,
+                accuracy,
+                waktu
+            );
+
+        },
+
+
+        function (error) {
+
+            console.error(
+                "GPS ERROR:",
+                error
+            );
+
+
+            let message =
+                "Gagal mendapatkan lokasi.";
+
+
+            if (
+                error.code ===
+                error.PERMISSION_DENIED
+            ) {
+
+                message =
+                    "Izin lokasi ditolak.";
+
+            }
+
+
+            if (
+                error.code ===
+                error.POSITION_UNAVAILABLE
+            ) {
+
+                message =
+                    "Lokasi tidak tersedia.";
+
+            }
+
+
+            if (
+                error.code ===
+                error.TIMEOUT
+            ) {
+
+                message =
+                    "Pengambilan lokasi timeout.";
+
+            }
+
+
+            setStatus(
+                message,
+                "error"
+            );
+
+
+            btnAmbilLokasi.disabled =
+                false;
+
+        },
+
+
+        {
+            enableHighAccuracy: true,
+
+            timeout: 30000,
+
+            maximumAge: 0
+
+        }
+
+    );
+
+}
+
+
+/**
+ * ==========================================
+ * KIRIM KE GOOGLE APPS SCRIPT
+ * ==========================================
+ */
+
+function kirimKeSpreadsheet(
+    latitude,
+    longitude,
+    accuracy,
+    waktu
+) {
+
+
+    const url =
+        GOOGLE_SCRIPT_URL +
+
+        "?latitude=" +
+        encodeURIComponent(
+            latitude
+        ) +
+
+        "&longitude=" +
+        encodeURIComponent(
+            longitude
+        ) +
+
+        "&accuracy=" +
+        encodeURIComponent(
+            accuracy
+        ) +
+
+        "&waktu=" +
+        encodeURIComponent(
+            waktu
         );
 
 
-      console.log(
-        "Latitude:",
-        latitude
-      );
-
-      console.log(
-        "Longitude:",
-        longitude
-      );
-
-      console.log(
-        "Accuracy:",
-        accuracy
-      );
-
-      console.log(
-        "Waktu:",
-        waktu
-      );
-
-
-      // ==========================
-      // Tampilkan ke halaman
-      // ==========================
-
-      latitudeInput.value =
-        latitude;
-
-
-      longitudeInput.value =
-        longitude;
-
-
-      accuracyInput.value =
-        accuracy.toFixed(2) +
-        " meter";
-
-
-      waktuInput.value =
-        waktu;
-
-
-      setStatus(
-        "Lokasi berhasil diperoleh. Mengirim data...",
-        "loading"
-      );
-
-
-      // ==========================
-      // Kirim ke Spreadsheet
-      // ==========================
-
-      kirimKeGoogleSheet(
-        latitude,
-        longitude,
-        accuracy,
-        waktu
-      );
-
-    },
-
-
-    function (error) {
-
-      console.error(
-        "GPS ERROR:",
-        error
-      );
-
-
-      let message =
-        "Gagal mengambil lokasi.";
-
-
-      if (
-        error.code ===
-        error.PERMISSION_DENIED
-      ) {
-
-        message =
-          "Izin lokasi ditolak.";
-
-      }
-
-
-      else if (
-        error.code ===
-        error.POSITION_UNAVAILABLE
-      ) {
-
-        message =
-          "Lokasi tidak tersedia.";
-
-      }
-
-
-      else if (
-        error.code ===
-        error.TIMEOUT
-      ) {
-
-        message =
-          "Pengambilan lokasi timeout.";
-
-      }
-
-
-      setStatus(
-        message,
-        "error"
-      );
-
-
-      btnAmbilLokasi.disabled =
-        false;
-
-    },
-
-
-    {
-      enableHighAccuracy: true,
-      timeout: 30000,
-      maximumAge: 0
-    }
-
-  );
-
-}
-
-
-/**
- * ==========================================
- * KIRIM KE GOOGLE SHEET
- * ==========================================
- */
-function kirimKeGoogleSheet(
-  latitude,
-  longitude,
-  accuracy,
-  waktu
-) {
-
-  console.log(
-    "Mengirim data ke Google Spreadsheet..."
-  );
-
-
-  const url =
-    GOOGLE_SCRIPT_URL +
-    "?latitude=" +
-    encodeURIComponent(
-      latitude
-    ) +
-    "&longitude=" +
-    encodeURIComponent(
-      longitude
-    ) +
-    "&accuracy=" +
-    encodeURIComponent(
-      accuracy
-    ) +
-    "&waktu=" +
-    encodeURIComponent(
-      waktu
+    console.log(
+        "Mengirim:",
+        url
     );
 
 
-  console.log(
-    "URL:",
-    url
-  );
+    /*
+     * Gunakan Image request.
+     *
+     * Tidak menggunakan fetch POST.
+     * Tidak menggunakan CORS.
+     */
+
+    const request =
+        new Image();
 
 
-  /*
-   * Menggunakan GET.
-   *
-   * Image request tidak terkena masalah
-   * CORS seperti fetch POST.
-   */
-  const request =
-    new Image();
+    request.onload =
+        function () {
+
+            console.log(
+                "Request selesai."
+            );
+
+        };
 
 
-  request.onload =
-    function () {
+    request.onerror =
+        function () {
 
-      console.log(
-        "Request selesai."
-      );
+            /*
+             * Error pada Image tidak berarti
+             * Apps Script gagal menerima request.
+             *
+             * Yang penting request sudah
+             * dikirim ke URL.
+             */
 
-    };
+            console.log(
+                "Request telah dikirim."
+            );
 
-
-  request.onerror =
-    function () {
-
-      console.log(
-        "Request dikirim ke Apps Script."
-      );
-
-    };
+        };
 
 
-  request.src =
-    url;
+    request.src = url;
 
 
-  /*
-   * Jangan langsung menganggap response
-   * sebagai bukti spreadsheet sudah tersimpan.
-   *
-   * Status ini menunjukkan request sudah
-   * dikirim ke endpoint Apps Script.
-   */
-  setStatus(
-    "Data lokasi sedang disimpan ke Spreadsheet...",
-    "loading"
-  );
+    /*
+     * Berikan waktu untuk Apps Script
+     * menyimpan data.
+     */
+
+    setTimeout(
+        function () {
+
+            setStatus(
+                "Data lokasi telah dikirim ke Spreadsheet.",
+                "success"
+            );
 
 
-  /*
-   * Beri sedikit waktu untuk Apps Script
-   * memproses request.
-   */
-  setTimeout(
-    function () {
+            btnAmbilLokasi.disabled =
+                false;
 
-      setStatus(
-        "Data lokasi telah dikirim.",
-        "success"
-      );
-
-
-      btnAmbilLokasi.disabled =
-        false;
-
-    },
-    1500
-  );
+        },
+        2000
+    );
 
 }
 
 
 /**
  * ==========================================
- * FORMAT WAKTU
+ * FORMAT WAKTU INDONESIA
  * ==========================================
  */
+
 function formatWaktu(timestamp) {
 
-  const date =
-    timestamp
-      ? new Date(timestamp)
-      : new Date();
+    const date =
+        timestamp
+            ? new Date(timestamp)
+            : new Date();
 
 
-  return new Intl.DateTimeFormat(
-    "id-ID",
-    {
-      timeZone: "Asia/Jakarta",
+    return new Intl.DateTimeFormat(
+        "id-ID",
+        {
 
-      year: "numeric",
+            timeZone:
+                "Asia/Jakarta",
 
-      month: "2-digit",
+            year:
+                "numeric",
 
-      day: "2-digit",
+            month:
+                "2-digit",
 
-      hour: "2-digit",
+            day:
+                "2-digit",
 
-      minute: "2-digit",
+            hour:
+                "2-digit",
 
-      second: "2-digit",
+            minute:
+                "2-digit",
 
-      hour12: false
-    }
-  ).format(date);
+            second:
+                "2-digit",
+
+            hour12:
+                false
+
+        }
+    ).format(date);
 
 }
 
@@ -409,27 +404,25 @@ function formatWaktu(timestamp) {
  * STATUS
  * ==========================================
  */
+
 function setStatus(
-  message,
-  type
+    message,
+    type
 ) {
 
-  if (!statusElement) {
+    if (!statusElement) {
 
-    console.log(
-      message
-    );
+        return;
 
-    return;
-  }
+    }
 
 
-  statusElement.textContent =
-    message;
+    statusElement.textContent =
+        message;
 
 
-  statusElement.className =
-    "status status-" +
-    type;
+    statusElement.className =
+        "status status-" +
+        type;
 
 }
