@@ -40,7 +40,7 @@ body {
 
     max-width: 500px;
 
-    background: white;
+    background: #ffffff;
 
     padding: 30px;
 
@@ -73,13 +73,13 @@ h1 {
 
 .subtitle {
 
-    text-align: center;
-
-    color: #64748b;
-
     margin-top: 8px;
 
     margin-bottom: 0;
+
+    text-align: center;
+
+    color: #64748b;
 
 }
 
@@ -88,25 +88,21 @@ button {
 
     width: 100%;
 
+    padding: 16px;
+
     border: none;
 
     border-radius: 10px;
 
-    padding: 16px;
+    background: #2563eb;
+
+    color: white;
 
     font-size: 16px;
 
     font-weight: bold;
 
     cursor: pointer;
-
-    background: #2563eb;
-
-    color: white;
-
-    transition:
-        background 0.2s,
-        transform 0.1s;
 
 }
 
@@ -226,6 +222,8 @@ input {
 
     background: #f8fafc;
 
+    color: #0f172a;
+
     font-size: 14px;
 
 }
@@ -237,13 +235,15 @@ input {
 
     padding: 15px;
 
+    border-radius: 10px;
+
     background: #f8fafc;
 
-    border-radius: 10px;
+    color: #475569;
 
     font-size: 13px;
 
-    color: #475569;
+    line-height: 1.5;
 
 }
 
@@ -255,18 +255,9 @@ input {
 }
 
 
-.info ul {
+.info p:last-child {
 
     margin-bottom: 0;
-
-    padding-left: 20px;
-
-}
-
-
-.info li {
-
-    margin-bottom: 5px;
 
 }
 
