@@ -1,5 +1,5 @@
 const GOOGLE_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbzex8Fm438xhtKQ-BtHqUBS4bEufrlf_PC4MLfAl99k7JW_-BdWLmrlW7PIr39J5Vg1/exec";
+    "https://script.google.com/macros/s/AKfycbxAaabjNyiGoaJlllP85BaWnwNthj7F-Xt0wUNuzVqUVg5aodiiqa1fcu4xmfK_83-K/exec";
 
 
 const taskInput = document.getElementById("task");
