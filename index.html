@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -12,204 +10,149 @@
 
     <meta
         name="theme-color"
-        content="#2563eb"
+        content="#1f2937"
     >
 
-    <meta
-        name="description"
-        content="Personal Travel Log"
-    >
-
-    <title>Travel Log</title>
+    <title>Personal Travel Log</title>
 
     <link
         rel="stylesheet"
         href="style.css"
     >
-
 </head>
-
 
 <body>
 
+    <div class="container">
 
-    <main class="container">
+        <div class="card">
 
+            <h1>Personal Travel Log</h1>
 
-        <section class="card">
-
-
-            <!-- =================================
-                 HEADER
-                 ================================= -->
-
-            <div class="header">
-
-                <h1>
-                    Travel Log
-                </h1>
-
-                <p class="subtitle">
-                    Pencatatan lokasi perjalanan
-                </p>
-
-            </div>
+            <p class="subtitle">
+                Catat lokasi perjalanan Anda
+            </p>
 
 
-            <!-- =================================
-                 TASK
-                 ================================= -->
+            <!-- TASK -->
 
-            <div class="field">
+            <div class="form-group">
 
                 <label for="task">
-                    Task
+                    Task / Kegiatan
                 </label>
 
                 <input
                     type="text"
                     id="task"
-                    placeholder="Masukkan task / kegiatan"
+                    placeholder="Contoh: Maintenance Server"
                     autocomplete="off"
                 >
 
             </div>
 
 
-            <!-- =================================
-                 BUTTON
-                 ================================= -->
+            <!-- BUTTON -->
 
             <button
-                id="btnAmbilLokasi"
+                id="locationButton"
                 type="button"
             >
                 AMBIL LOKASI
             </button>
 
 
-            <!-- =================================
-                 STATUS
-                 ================================= -->
+            <!-- STATUS -->
 
             <div
                 id="status"
-                class="status status-idle"
+                class="status"
             >
-                Isi task terlebih dahulu.
+                Belum mengambil lokasi.
             </div>
 
 
-            <!-- =================================
-                 DATA GPS
-                 ================================= -->
+            <!-- RESULT -->
 
-            <div class="data">
+            <div
+                id="result"
+                class="result hidden"
+            >
 
+                <div class="data-row">
 
-                <!-- LATITUDE -->
+                    <span>Task</span>
 
-                <div class="field">
-
-                    <label for="latitude">
-                        Latitude
-                    </label>
-
-                    <input
-                        type="text"
-                        id="latitude"
-                        readonly
-                        placeholder="-"
-                    >
+                    <strong id="resultTask">
+                        -
+                    </strong>
 
                 </div>
 
 
-                <!-- LONGITUDE -->
+                <div class="data-row">
 
-                <div class="field">
+                    <span>Latitude</span>
 
-                    <label for="longitude">
-                        Longitude
-                    </label>
-
-                    <input
-                        type="text"
-                        id="longitude"
-                        readonly
-                        placeholder="-"
-                    >
+                    <strong id="latitude">
+                        -
+                    </strong>
 
                 </div>
 
 
-                <!-- ACCURACY -->
+                <div class="data-row">
 
-                <div class="field">
+                    <span>Longitude</span>
 
-                    <label for="accuracy">
-                        Accuracy
-                    </label>
-
-                    <input
-                        type="text"
-                        id="accuracy"
-                        readonly
-                        placeholder="-"
-                    >
+                    <strong id="longitude">
+                        -
+                    </strong>
 
                 </div>
 
 
-                <!-- WAKTU -->
+                <div class="data-row">
 
-                <div class="field">
+                    <span>Accuracy</span>
 
-                    <label for="waktu">
-                        Waktu
-                    </label>
-
-                    <input
-                        type="text"
-                        id="waktu"
-                        readonly
-                        placeholder="-"
-                    >
+                    <strong id="accuracy">
+                        -
+                    </strong>
 
                 </div>
 
+
+                <div class="data-row">
+
+                    <span>Waktu</span>
+
+                    <strong id="waktu">
+                        -
+                    </strong>
+
+                </div>
 
             </div>
 
 
-            <!-- =================================
-                 INFORMASI
-                 ================================= -->
+            <!-- SAVE BUTTON -->
 
-            <div class="info">
+            <button
+                id="saveButton"
+                type="button"
+                class="save-button"
+                disabled
+            >
+                SIMPAN LOG
+            </button>
 
-                <p>
-                    Task wajib diisi sebelum mengambil lokasi.
-                </p>
+        </div>
 
-                <p>
-                    Tekan
-                    <strong>AMBIL LOKASI</strong>
-                    untuk mengambil GPS dan menyimpan data.
-                </p>
-
-            </div>
-
-
-        </section>
-
-
-    </main>
+    </div>
 
 
     <script src="script.js"></script>
 
-
 </body>
-
 </html>
