@@ -1,563 +1,501 @@
-/**
- * ==========================================
- * GOOGLE APPS SCRIPT URL
- * ==========================================
- *
- * PENTING:
- * GANTI URL DI BAWAH DENGAN URL
- * WEB APP TERBARU HASIL DEPLOYMENT.
- */
-
 const GOOGLE_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbyI7V-63GZ4QATPm2LQCwfscW-GzlqNAqcsyLIB0xAuyZQ-YRfU-xL4FIk8udME5fWH/exec";
+    "https://script.google.com/macros/s/AKfycbzex8Fm438xhtKQ-BtHqUBS4bEufrlf_PC4MLfAl99k7JW_-BdWLmrlW7PIr39J5Vg1/exec";
 
 
-/**
- * ==========================================
- * HALAMAN SELESAI DIMUAT
- * ==========================================
- */
+const taskInput =
+    document.getElementById("task");
 
-document.addEventListener(
-    "DOMContentLoaded",
+const locationButton =
+    document.getElementById("locationButton");
+
+const saveButton =
+    document.getElementById("saveButton");
+
+const statusElement =
+    document.getElementById("status");
+
+const resultElement =
+    document.getElementById("result");
+
+const resultTask =
+    document.getElementById("resultTask");
+
+const latitudeElement =
+    document.getElementById("latitude");
+
+const longitudeElement =
+    document.getElementById("longitude");
+
+const accuracyElement =
+    document.getElementById("accuracy");
+
+const waktuElement =
+    document.getElementById("waktu");
+
+
+let locationData = {
+    task: "",
+    latitude: "",
+    longitude: "",
+    accuracy: "",
+    waktu: ""
+};
+
+
+/* ==========================================
+   AMBIL LOKASI
+   ========================================== */
+
+locationButton.addEventListener(
+    "click",
     function () {
 
-        const button =
-            document.getElementById(
-                "btnAmbilLokasi"
+        const task =
+            taskInput.value.trim();
+
+
+        if (!task) {
+
+            setStatus(
+                "Task / kegiatan wajib diisi.",
+                "error"
             );
 
-
-        if (!button) {
-
-            console.error(
-                "Tombol AMBIL LOKASI tidak ditemukan."
-            );
+            taskInput.focus();
 
             return;
-
         }
 
 
-        button.addEventListener(
-            "click",
-            ambilLokasi
+        if (!navigator.geolocation) {
+
+            setStatus(
+                "Browser tidak mendukung GPS / Geolocation.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        setStatus(
+            "Sedang mengambil lokasi...",
+            "loading"
         );
 
+
+        locationButton.disabled = true;
+
+        saveButton.disabled = true;
+
+
+        navigator.geolocation.getCurrentPosition(
+
+            function (position) {
+
+                const latitude =
+                    position.coords.latitude;
+
+                const longitude =
+                    position.coords.longitude;
+
+                const accuracy =
+                    position.coords.accuracy;
+
+
+                const now =
+                    new Date();
+
+
+                const waktu =
+                    formatDateTime(now);
+
+
+                locationData = {
+
+                    task:
+                        task,
+
+                    latitude:
+                        latitude.toFixed(8),
+
+                    longitude:
+                        longitude.toFixed(8),
+
+                    accuracy:
+                        accuracy.toFixed(2),
+
+                    waktu:
+                        waktu
+                };
+
+
+                /* ==========================
+                   TAMPILKAN HASIL
+                   ========================== */
+
+                resultTask.textContent =
+                    locationData.task;
+
+
+                latitudeElement.textContent =
+                    locationData.latitude;
+
+
+                longitudeElement.textContent =
+                    locationData.longitude;
+
+
+                accuracyElement.textContent =
+                    locationData.accuracy +
+                    " meter";
+
+
+                waktuElement.textContent =
+                    locationData.waktu;
+
+
+                resultElement.classList.remove(
+                    "hidden"
+                );
+
+
+                setStatus(
+                    "Lokasi berhasil diperoleh. Periksa data lalu klik SIMPAN LOG.",
+                    "success"
+                );
+
+
+                saveButton.disabled = false;
+
+                locationButton.disabled = false;
+
+            },
+
+
+            function (error) {
+
+                locationButton.disabled = false;
+
+                saveButton.disabled = true;
+
+
+                let message =
+                    "Gagal mendapatkan lokasi.";
+
+
+                switch (error.code) {
+
+                    case error.PERMISSION_DENIED:
+
+                        message =
+                            "Izin lokasi ditolak. Aktifkan izin lokasi pada browser.";
+
+                        break;
+
+
+                    case error.POSITION_UNAVAILABLE:
+
+                        message =
+                            "Informasi lokasi tidak tersedia.";
+
+                        break;
+
+
+                    case error.TIMEOUT:
+
+                        message =
+                            "Pengambilan lokasi timeout.";
+
+                        break;
+
+
+                    default:
+
+                        message =
+                            "Terjadi kesalahan saat mengambil lokasi.";
+                }
+
+
+                setStatus(
+                    message,
+                    "error"
+                );
+            },
+
+
+            {
+                enableHighAccuracy: true,
+
+                timeout: 30000,
+
+                maximumAge: 0
+            }
+        );
     }
 );
 
 
-/**
- * ==========================================
- * FUNGSI AMBIL LOKASI
- * ==========================================
- */
+/* ==========================================
+   SIMPAN LOG
+   ========================================== */
 
-function ambilLokasi() {
+saveButton.addEventListener(
+    "click",
+    async function () {
 
-    const taskInput =
-        document.getElementById(
-            "task"
+        if (
+            !locationData.task ||
+            !locationData.latitude ||
+            !locationData.longitude
+        ) {
+
+            setStatus(
+                "Data lokasi belum tersedia.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        saveButton.disabled = true;
+
+        locationButton.disabled = true;
+
+
+        setStatus(
+            "Mengirim data ke Google Spreadsheet...",
+            "loading"
         );
 
 
-    const button =
-        document.getElementById(
-            "btnAmbilLokasi"
+        const params =
+            new URLSearchParams({
+
+                task:
+                    locationData.task,
+
+                latitude:
+                    locationData.latitude,
+
+                longitude:
+                    locationData.longitude,
+
+                accuracy:
+                    locationData.accuracy,
+
+                waktu:
+                    locationData.waktu
+
+            });
+
+
+        const requestUrl =
+            GOOGLE_SCRIPT_URL +
+            "?" +
+            params.toString();
+
+
+        console.log(
+            "REQUEST URL:",
+            requestUrl
         );
 
 
-    const status =
-        document.getElementById(
-            "status"
-        );
+        try {
 
+            const response =
+                await fetch(
+                    requestUrl,
+                    {
+                        method: "GET",
 
-    // ========================================
-    // AMBIL TASK
-    // ========================================
-
-    const task =
-        taskInput.value.trim();
-
-
-    // ========================================
-    // VALIDASI TASK
-    // ========================================
-
-    if (task === "") {
-
-        status.textContent =
-            "Task wajib diisi sebelum mengambil lokasi.";
-
-        status.className =
-            "status status-error";
-
-
-        taskInput.focus();
-
-
-        return;
-
-    }
-
-
-    // ========================================
-    // CEK GPS
-    // ========================================
-
-    if (!navigator.geolocation) {
-
-        status.textContent =
-            "Browser tidak mendukung GPS.";
-
-        status.className =
-            "status status-error";
-
-
-        return;
-
-    }
-
-
-    // ========================================
-    // DISABLE BUTTON
-    // ========================================
-
-    button.disabled =
-        true;
-
-
-    status.textContent =
-        "Mengambil lokasi GPS...";
-
-    status.className =
-        "status status-loading";
-
-
-    // ========================================
-    // AMBIL POSISI
-    // ========================================
-
-    navigator.geolocation.getCurrentPosition(
-
-        function (position) {
-
-            // ==================================
-            // DATA GPS
-            // ==================================
-
-            const latitude =
-                position.coords.latitude;
-
-
-            const longitude =
-                position.coords.longitude;
-
-
-            const accuracy =
-                position.coords.accuracy;
-
-
-            const waktu =
-                formatWaktu(
-                    position.timestamp
+                        cache: "no-cache"
+                    }
                 );
 
 
-            // ==================================
-            // TAMPILKAN KE HALAMAN
-            // ==================================
-
-            document.getElementById(
-                "latitude"
-            ).value =
-                latitude;
-
-
-            document.getElementById(
-                "longitude"
-            ).value =
-                longitude;
-
-
-            document.getElementById(
-                "accuracy"
-            ).value =
-                accuracy.toFixed(2) +
-                " meter";
-
-
-            document.getElementById(
-                "waktu"
-            ).value =
-                waktu;
-
-
-            // ==================================
-            // STATUS
-            // ==================================
-
-            status.textContent =
-                "Lokasi berhasil diperoleh. Mengirim data...";
-
-            status.className =
-                "status status-loading";
-
-
-            // ==================================
-            // KIRIM KE GOOGLE SHEET
-            // ==================================
-
-            kirimKeGoogleSheet(
-
-                task,
-
-                latitude,
-
-                longitude,
-
-                accuracy,
-
-                waktu
-
-            );
-
-        },
-
-
-        function (error) {
-
-            console.error(
-                "GPS ERROR:",
-                error
-            );
-
-
-            button.disabled =
-                false;
-
-
-            status.className =
-                "status status-error";
-
-
-            switch (
-                error.code
-            ) {
-
-                case error.PERMISSION_DENIED:
-
-                    status.textContent =
-                        "Izin lokasi ditolak. Izinkan akses lokasi pada browser.";
-
-                    break;
-
-
-                case error.POSITION_UNAVAILABLE:
-
-                    status.textContent =
-                        "Lokasi GPS tidak tersedia.";
-
-                    break;
-
-
-                case error.TIMEOUT:
-
-                    status.textContent =
-                        "GPS timeout. Silakan coba lagi.";
-
-                    break;
-
-
-                default:
-
-                    status.textContent =
-                        "Gagal mendapatkan lokasi.";
-
-                    break;
-
-            }
-
-        },
-
-
-        {
-
-            enableHighAccuracy:
-                true,
-
-            timeout:
-                30000,
-
-            maximumAge:
-                0
-
-        }
-
-    );
-
-}
-
-
-/**
- * ==========================================
- * KIRIM DATA KE GOOGLE APPS SCRIPT
- * ==========================================
- */
-
-function kirimKeGoogleSheet(
-
-    task,
-
-    latitude,
-
-    longitude,
-
-    accuracy,
-
-    waktu
-
-) {
-
-
-    // ========================================
-    // BUAT PARAMETER
-    // ========================================
-
-    const params =
-        new URLSearchParams();
-
-
-    params.append(
-        "task",
-        task
-    );
-
-
-    params.append(
-        "latitude",
-        latitude
-    );
-
-
-    params.append(
-        "longitude",
-        longitude
-    );
-
-
-    params.append(
-        "accuracy",
-        accuracy.toFixed(2)
-    );
-
-
-    params.append(
-        "waktu",
-        waktu
-    );
-
-
-    // ========================================
-    // URL REQUEST
-    // ========================================
-
-    const url =
-        GOOGLE_SCRIPT_URL +
-        "?" +
-        params.toString();
-
-
-    console.log(
-        "================================"
-    );
-
-    console.log(
-        "MENGIRIM DATA KE GOOGLE SHEET"
-    );
-
-    console.log(
-        "Task:",
-        task
-    );
-
-    console.log(
-        "Latitude:",
-        latitude
-    );
-
-    console.log(
-        "Longitude:",
-        longitude
-    );
-
-    console.log(
-        "Accuracy:",
-        accuracy
-    );
-
-    console.log(
-        "Waktu:",
-        waktu
-    );
-
-    console.log(
-        "URL:",
-        url
-    );
-
-    console.log(
-        "================================"
-    );
-
-
-    // ========================================
-    // REQUEST
-    // ========================================
-
-    fetch(
-
-        url,
-
-        {
-
-            method:
-                "GET",
-
-            mode:
-                "no-cors",
-
-            cache:
-                "no-store"
-
-        }
-
-    )
-
-    .then(
-
-        function () {
+            const text =
+                await response.text();
 
 
             console.log(
-                "Request berhasil dikirim."
+                "SERVER RESPONSE:",
+                text
             );
 
 
-            const status =
-                document.getElementById(
-                    "status"
+            let result;
+
+
+            try {
+
+                result =
+                    JSON.parse(text);
+
+            }
+            catch (jsonError) {
+
+                throw new Error(
+                    "Response Google Apps Script bukan JSON: " +
+                    text
                 );
+            }
 
 
-            const button =
-                document.getElementById(
-                    "btnAmbilLokasi"
+            if (
+                result.status !==
+                "success"
+            ) {
+
+                throw new Error(
+                    result.message ||
+                    "Google Apps Script gagal menyimpan data."
                 );
+            }
 
 
-            status.textContent =
-                "Data lokasi berhasil dikirim.";
+            setStatus(
+                "Data berhasil disimpan ke Google Spreadsheet.",
+                "success"
+            );
 
-            status.className =
-                "status status-success";
 
+            saveButton.disabled = true;
 
-            button.disabled =
-                false;
+            locationButton.disabled = false;
+
 
         }
-
-    )
-
-    .catch(
-
-        function (error) {
-
+        catch (error) {
 
             console.error(
-                "ERROR MENGIRIM DATA:",
+                "SAVE ERROR:",
                 error
             );
 
 
-            const status =
-                document.getElementById(
-                    "status"
-                );
+            setStatus(
+                "Gagal mengirim data: " +
+                error.message,
+                "error"
+            );
 
 
-            const button =
-                document.getElementById(
-                    "btnAmbilLokasi"
-                );
+            saveButton.disabled = false;
 
-
-            status.textContent =
-                "Gagal mengirim data.";
-
-            status.className =
-                "status status-error";
-
-
-            button.disabled =
-                false;
-
+            locationButton.disabled = false;
         }
+    }
+);
 
+
+/* ==========================================
+   FORMAT WAKTU
+   ========================================== */
+
+function formatDateTime(date) {
+
+    const day =
+        String(
+            date.getDate()
+        ).padStart(2, "0");
+
+
+    const month =
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
+
+
+    const year =
+        date.getFullYear();
+
+
+    const hours =
+        String(
+            date.getHours()
+        ).padStart(2, "0");
+
+
+    const minutes =
+        String(
+            date.getMinutes()
+        ).padStart(2, "0");
+
+
+    const seconds =
+        String(
+            date.getSeconds()
+        ).padStart(2, "0");
+
+
+    return (
+        day +
+        "/" +
+        month +
+        "/" +
+        year +
+        " " +
+        hours +
+        ":" +
+        minutes +
+        ":" +
+        seconds
     );
-
 }
 
 
-/**
- * ==========================================
- * FORMAT WAKTU
- * ==========================================
- */
+/* ==========================================
+   STATUS
+   ========================================== */
 
-function formatWaktu(timestamp) {
+function setStatus(
+    message,
+    type
+) {
 
-    const date =
-        timestamp
-            ? new Date(timestamp)
-            : new Date();
+    statusElement.textContent =
+        message;
 
 
-    return new Intl.DateTimeFormat(
+    if (type === "success") {
 
-        "id-ID",
+        statusElement.style.background =
+            "#dcfce7";
 
-        {
+        statusElement.style.color =
+            "#166534";
+    }
 
-            timeZone:
-                "Asia/Jakarta",
 
-            year:
-                "numeric",
+    else if (type === "error") {
 
-            month:
-                "2-digit",
+        statusElement.style.background =
+            "#fee2e2";
 
-            day:
-                "2-digit",
+        statusElement.style.color =
+            "#991b1b";
+    }
 
-            hour:
-                "2-digit",
 
-            minute:
-                "2-digit",
+    else if (type === "loading") {
 
-            second:
-                "2-digit",
+        statusElement.style.background =
+            "#dbeafe";
 
-            hour12:
-                false
+        statusElement.style.color =
+            "#1e40af";
+    }
 
-        }
 
-    ).format(date);
+    else {
 
+        statusElement.style.background =
+            "#f3f4f6";
+
+        statusElement.style.color =
+            "#374151";
+    }
 }
