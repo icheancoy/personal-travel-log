@@ -64,6 +64,41 @@ function ambilLokasi() {
         );
 
 
+    const taskInput =
+        document.getElementById(
+            "task"
+        );
+
+
+    // ========================================
+    // AMBIL TASK
+    // ========================================
+
+    const task =
+        taskInput.value.trim();
+
+
+    // ========================================
+    // VALIDASI TASK
+    // ========================================
+
+    if (task === "") {
+
+        status.textContent =
+            "Task wajib diisi sebelum mengambil lokasi.";
+
+        status.className =
+            "status status-error";
+
+
+        taskInput.focus();
+
+
+        return;
+
+    }
+
+
     // ========================================
     // CEK SUPPORT GPS
     // ========================================
@@ -105,7 +140,7 @@ function ambilLokasi() {
 
 
             // ==================================
-            // AMBIL DATA
+            // AMBIL DATA GPS
             // ==================================
 
             const latitude =
@@ -139,6 +174,11 @@ function ambilLokasi() {
             );
 
             console.log(
+                "Task:",
+                task
+            );
+
+            console.log(
                 "Latitude:",
                 latitude
             );
@@ -164,7 +204,7 @@ function ambilLokasi() {
 
 
             // ==================================
-            // TAMPILKAN KE HALAMAN
+            // TAMPILKAN DATA
             // ==================================
 
             document.getElementById(
@@ -204,6 +244,8 @@ function ambilLokasi() {
             // ==================================
 
             kirimKeGoogleSheet(
+
+                task,
 
                 latitude,
 
@@ -294,11 +336,13 @@ function ambilLokasi() {
 
 /**
  * ==========================================
- * KIRIM DATA KE GOOGLE APPS SCRIPT
+ * KIRIM DATA KE GOOGLE SHEET
  * ==========================================
  */
 
 function kirimKeGoogleSheet(
+
+    task,
 
     latitude,
 
@@ -317,6 +361,12 @@ function kirimKeGoogleSheet(
 
     const params =
         new URLSearchParams();
+
+
+    params.append(
+        "task",
+        task
+    );
 
 
     params.append(
@@ -402,10 +452,6 @@ function kirimKeGoogleSheet(
                 "Request sudah dikirim ke Google Apps Script."
             );
 
-
-            // ==================================
-            // STATUS
-            // ==================================
 
             const status =
                 document.getElementById(
