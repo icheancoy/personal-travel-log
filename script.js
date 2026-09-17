@@ -1,7 +1,11 @@
 /**
  * ==========================================
- * URL GOOGLE APPS SCRIPT
+ * GOOGLE APPS SCRIPT URL
  * ==========================================
+ *
+ * PENTING:
+ * GANTI URL DI BAWAH DENGAN URL
+ * WEB APP TERBARU HASIL DEPLOYMENT.
  */
 
 const GOOGLE_SCRIPT_URL =
@@ -10,7 +14,7 @@ const GOOGLE_SCRIPT_URL =
 
 /**
  * ==========================================
- * SAAT HALAMAN SELESAI DIMUAT
+ * HALAMAN SELESAI DIMUAT
  * ==========================================
  */
 
@@ -27,7 +31,7 @@ document.addEventListener(
         if (!button) {
 
             console.error(
-                "Tombol tidak ditemukan."
+                "Tombol AMBIL LOKASI tidak ditemukan."
             );
 
             return;
@@ -46,11 +50,17 @@ document.addEventListener(
 
 /**
  * ==========================================
- * AMBIL LOKASI GPS
+ * FUNGSI AMBIL LOKASI
  * ==========================================
  */
 
 function ambilLokasi() {
+
+    const taskInput =
+        document.getElementById(
+            "task"
+        );
+
 
     const button =
         document.getElementById(
@@ -61,12 +71,6 @@ function ambilLokasi() {
     const status =
         document.getElementById(
             "status"
-        );
-
-
-    const taskInput =
-        document.getElementById(
-            "task"
         );
 
 
@@ -100,7 +104,7 @@ function ambilLokasi() {
 
 
     // ========================================
-    // CEK SUPPORT GPS
+    // CEK GPS
     // ========================================
 
     if (!navigator.geolocation) {
@@ -111,6 +115,7 @@ function ambilLokasi() {
         status.className =
             "status status-error";
 
+
         return;
 
     }
@@ -120,7 +125,8 @@ function ambilLokasi() {
     // DISABLE BUTTON
     // ========================================
 
-    button.disabled = true;
+    button.disabled =
+        true;
 
 
     status.textContent =
@@ -131,16 +137,15 @@ function ambilLokasi() {
 
 
     // ========================================
-    // GET CURRENT POSITION
+    // AMBIL POSISI
     // ========================================
 
     navigator.geolocation.getCurrentPosition(
 
         function (position) {
 
-
             // ==================================
-            // AMBIL DATA GPS
+            // DATA GPS
             // ==================================
 
             const latitude =
@@ -162,49 +167,7 @@ function ambilLokasi() {
 
 
             // ==================================
-            // DEBUG CONSOLE
-            // ==================================
-
-            console.log(
-                "================================"
-            );
-
-            console.log(
-                "GPS BERHASIL"
-            );
-
-            console.log(
-                "Task:",
-                task
-            );
-
-            console.log(
-                "Latitude:",
-                latitude
-            );
-
-            console.log(
-                "Longitude:",
-                longitude
-            );
-
-            console.log(
-                "Accuracy:",
-                accuracy
-            );
-
-            console.log(
-                "Waktu:",
-                waktu
-            );
-
-            console.log(
-                "================================"
-            );
-
-
-            // ==================================
-            // TAMPILKAN DATA
+            // TAMPILKAN KE HALAMAN
             // ==================================
 
             document.getElementById(
@@ -232,6 +195,10 @@ function ambilLokasi() {
                 waktu;
 
 
+            // ==================================
+            // STATUS
+            // ==================================
+
             status.textContent =
                 "Lokasi berhasil diperoleh. Mengirim data...";
 
@@ -240,7 +207,7 @@ function ambilLokasi() {
 
 
             // ==================================
-            // KIRIM DATA
+            // KIRIM KE GOOGLE SHEET
             // ==================================
 
             kirimKeGoogleSheet(
@@ -262,14 +229,14 @@ function ambilLokasi() {
 
         function (error) {
 
-
             console.error(
                 "GPS ERROR:",
                 error
             );
 
 
-            button.disabled = false;
+            button.disabled =
+                false;
 
 
             status.className =
@@ -336,7 +303,7 @@ function ambilLokasi() {
 
 /**
  * ==========================================
- * KIRIM DATA KE GOOGLE SHEET
+ * KIRIM DATA KE GOOGLE APPS SCRIPT
  * ==========================================
  */
 
@@ -356,7 +323,7 @@ function kirimKeGoogleSheet(
 
 
     // ========================================
-    // BUAT QUERY STRING
+    // BUAT PARAMETER
     // ========================================
 
     const params =
@@ -394,7 +361,7 @@ function kirimKeGoogleSheet(
 
 
     // ========================================
-    // BUAT URL FINAL
+    // URL REQUEST
     // ========================================
 
     const url =
@@ -408,10 +375,36 @@ function kirimKeGoogleSheet(
     );
 
     console.log(
-        "MENGIRIM DATA"
+        "MENGIRIM DATA KE GOOGLE SHEET"
     );
 
     console.log(
+        "Task:",
+        task
+    );
+
+    console.log(
+        "Latitude:",
+        latitude
+    );
+
+    console.log(
+        "Longitude:",
+        longitude
+    );
+
+    console.log(
+        "Accuracy:",
+        accuracy
+    );
+
+    console.log(
+        "Waktu:",
+        waktu
+    );
+
+    console.log(
+        "URL:",
         url
     );
 
@@ -421,7 +414,7 @@ function kirimKeGoogleSheet(
 
 
     // ========================================
-    // KIRIM REQUEST
+    // REQUEST
     // ========================================
 
     fetch(
@@ -449,7 +442,7 @@ function kirimKeGoogleSheet(
 
 
             console.log(
-                "Request sudah dikirim ke Google Apps Script."
+                "Request berhasil dikirim."
             );
 
 
@@ -521,7 +514,7 @@ function kirimKeGoogleSheet(
 
 /**
  * ==========================================
- * FORMAT WAKTU INDONESIA
+ * FORMAT WAKTU
  * ==========================================
  */
 
