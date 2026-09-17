@@ -1,8 +1,15 @@
 const GOOGLE_SCRIPT_URL =
     "https://script.google.com/macros/s/AKfycbxAaabjNyiGoaJlllP85BaWnwNthj7F-Xt0wUNuzVqUVg5aodiiqa1fcu4xmfK_83-K/exec";
 
-console.log("SCRIPT VERSION: 2026-09-17-POST-01");
 
+console.log(
+    "SCRIPT VERSION: 2026-09-17-FIX-01"
+);
+
+
+// =====================================================
+// ELEMENT
+// =====================================================
 
 const taskInput =
     document.getElementById("task");
@@ -13,13 +20,11 @@ const locationButton =
 const saveButton =
     document.getElementById("saveButton");
 
-
 const statusBox =
     document.getElementById("status");
 
 const resultBox =
     document.getElementById("result");
-
 
 const resultTask =
     document.getElementById("resultTask");
@@ -78,11 +83,8 @@ function formatDateTime(date) {
 
 
     return new Intl.DateTimeFormat(
-
         "id-ID",
-
         options
-
     ).format(date);
 
 }
@@ -93,9 +95,7 @@ function formatDateTime(date) {
 // =====================================================
 
 locationButton.addEventListener(
-
     "click",
-
     function () {
 
         const task =
@@ -111,7 +111,6 @@ locationButton.addEventListener(
             taskInput.focus();
 
             return;
-
         }
 
 
@@ -122,15 +121,12 @@ locationButton.addEventListener(
             );
 
             return;
-
         }
 
 
-        locationButton.disabled =
-            true;
+        locationButton.disabled = true;
 
-        saveButton.disabled =
-            true;
+        saveButton.disabled = true;
 
 
         setStatus(
@@ -156,6 +152,10 @@ locationButton.addEventListener(
                         new Date()
                     );
 
+
+                // =====================================
+                // SIMPAN DATA
+                // =====================================
 
                 locationData = {
 
@@ -184,19 +184,15 @@ locationButton.addEventListener(
                 resultTask.textContent =
                     task;
 
-
                 latitudeBox.textContent =
                     latitude.toFixed(6);
-
 
                 longitudeBox.textContent =
                     longitude.toFixed(6);
 
-
                 accuracyBox.textContent =
                     accuracy.toFixed(2) +
                     " meter";
-
 
                 waktuBox.textContent =
                     waktu;
@@ -207,10 +203,10 @@ locationButton.addEventListener(
                 );
 
 
-                saveButton.disabled =
+                locationButton.disabled =
                     false;
 
-                locationButton.disabled =
+                saveButton.disabled =
                     false;
 
 
@@ -285,7 +281,6 @@ locationButton.addEventListener(
         );
 
     }
-
 );
 
 
@@ -294,9 +289,7 @@ locationButton.addEventListener(
 // =====================================================
 
 saveButton.addEventListener(
-
     "click",
-
     function () {
 
         if (!locationData) {
@@ -306,7 +299,6 @@ saveButton.addEventListener(
             );
 
             return;
-
         }
 
 
@@ -329,7 +321,7 @@ saveButton.addEventListener(
 
 
         // =============================================
-        // HIDDEN IFRAME
+        // BUAT / AMBIL IFRAME
         // =============================================
 
         let iframe =
@@ -345,29 +337,14 @@ saveButton.addEventListener(
                     "iframe"
                 );
 
-
             iframe.id =
                 "googlePostFrame";
 
             iframe.name =
                 "googlePostFrame";
 
-
-            iframe.style.position =
-                "fixed";
-
-            iframe.style.left =
-                "-9999px";
-
-            iframe.style.width =
-                "1px";
-
-            iframe.style.height =
-                "1px";
-
-            iframe.style.border =
-                "0";
-
+            iframe.style.display =
+                "none";
 
             document.body.appendChild(
                 iframe
@@ -377,7 +354,7 @@ saveButton.addEventListener(
 
 
         // =============================================
-        // FORM POST
+        // BUAT FORM
         // =============================================
 
         const form =
@@ -389,14 +366,11 @@ saveButton.addEventListener(
         form.method =
             "POST";
 
-
         form.action =
             GOOGLE_SCRIPT_URL;
 
-
         form.target =
             "googlePostFrame";
-
 
         form.style.display =
             "none";
@@ -427,7 +401,6 @@ saveButton.addEventListener(
 
 
         Object.keys(fields).forEach(
-
             function (key) {
 
                 const input =
@@ -435,30 +408,25 @@ saveButton.addEventListener(
                         "input"
                     );
 
-
                 input.type =
                     "hidden";
-
 
                 input.name =
                     key;
 
-
                 input.value =
                     fields[key];
-
 
                 form.appendChild(
                     input
                 );
 
             }
-
         );
 
 
         // =============================================
-        // SUBMIT POST
+        // SUBMIT
         // =============================================
 
         document.body.appendChild(
@@ -467,7 +435,7 @@ saveButton.addEventListener(
 
 
         console.log(
-            "POST ke Google Apps Script..."
+            "POST KE GOOGLE APPS SCRIPT"
         );
 
 
@@ -479,7 +447,6 @@ saveButton.addEventListener(
         // =============================================
 
         setTimeout(
-
             function () {
 
                 setStatus(
@@ -489,7 +456,6 @@ saveButton.addEventListener(
 
                 saveButton.disabled =
                     true;
-
 
                 locationButton.disabled =
                     false;
@@ -504,11 +470,8 @@ saveButton.addEventListener(
                 }
 
             },
-
             3000
-
         );
 
     }
-
 );
