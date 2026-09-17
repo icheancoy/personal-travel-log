@@ -1,5 +1,5 @@
 const GOOGLE_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbxAaabjNyiGoaJlllP85BaWnwNthj7F-Xt0wUNuzVqUVg5aodiiqa1fcu4xmfK_83-K/exec";
+    "https://script.google.com/macros/s/AKfycbwSWoLtiBHjBeyps5rWEOpT2TLHg0eOwVw0_ssExrXrnPba1Hfyey-vsG7TkRWWYD1M/exec";
 
 
 console.log(
