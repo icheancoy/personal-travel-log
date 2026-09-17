@@ -1,612 +1,369 @@
-// =====================================================
-// GOOGLE APPS SCRIPT URL
-// =====================================================
+* {
+    box-sizing: border-box;
+}
 
-const GOOGLE_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbxi5VRkmIWTsKyLhoqg4t6gpSvBwrqwY82i1OprwJ1w_Z/exec";
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
 
+body {
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 
-// =====================================================
-// ELEMENT
-// =====================================================
-
-const taskInput =
-    document.getElementById("task");
-
-const locationButton =
-    document.getElementById("locationButton");
-
-const saveButton =
-    document.getElementById("saveButton");
-
-const statusElement =
-    document.getElementById("status");
-
-const resultElement =
-    document.getElementById("result");
-
-const resultTask =
-    document.getElementById("resultTask");
-
-const latitudeElement =
-    document.getElementById("latitude");
-
-const longitudeElement =
-    document.getElementById("longitude");
-
-const accuracyElement =
-    document.getElementById("accuracy");
-
-const waktuElement =
-    document.getElementById("waktu");
-
-
-// =====================================================
-// VARIABLE DATA
-// =====================================================
-
-let locationData = {
-
-    task: "",
-
-    latitude: "",
-
-    longitude: "",
-
-    accuracy: "",
-
-    waktu: ""
-
-};
-
-
-// =====================================================
-// AMBIL LOKASI
-// =====================================================
-
-locationButton.addEventListener(
-    "click",
-    function () {
-
-        const task =
-            taskInput.value.trim();
-
-
-        // ---------------------------------------------
-        // VALIDASI TASK
-        // ---------------------------------------------
-
-        if (!task) {
-
-            setStatus(
-                "Task / kegiatan wajib diisi.",
-                "error"
-            );
-
-            taskInput.focus();
-
-            return;
-        }
-
-
-        // ---------------------------------------------
-        // CEK GEOLOCATION
-        // ---------------------------------------------
-
-        if (!navigator.geolocation) {
-
-            setStatus(
-                "Browser tidak mendukung GPS / Geolocation.",
-                "error"
-            );
-
-            return;
-        }
-
-
-        // ---------------------------------------------
-        // STATUS
-        // ---------------------------------------------
-
-        setStatus(
-            "Sedang mengambil lokasi...",
-            "loading"
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff 0%,
+            #f8fafc 50%,
+            #eef2ff 100%
         );
 
-
-        locationButton.disabled = true;
-
-        saveButton.disabled = true;
-
-
-        // ---------------------------------------------
-        // GET CURRENT POSITION
-        // ---------------------------------------------
-
-        navigator.geolocation.getCurrentPosition(
-
-            function (position) {
-
-                const latitude =
-                    position.coords.latitude;
-
-                const longitude =
-                    position.coords.longitude;
-
-                const accuracy =
-                    position.coords.accuracy;
-
-
-                const now =
-                    new Date();
-
-
-                const waktu =
-                    formatDateTime(now);
-
-
-                // -------------------------------------
-                // SIMPAN DATA
-                // -------------------------------------
-
-                locationData = {
-
-                    task: task,
-
-                    latitude:
-                        latitude.toFixed(8),
-
-                    longitude:
-                        longitude.toFixed(8),
-
-                    accuracy:
-                        accuracy.toFixed(2),
-
-                    waktu:
-                        waktu
-
-                };
-
-
-                // -------------------------------------
-                // TAMPILKAN DATA
-                // -------------------------------------
-
-                resultTask.textContent =
-                    locationData.task;
-
-                latitudeElement.textContent =
-                    locationData.latitude;
-
-                longitudeElement.textContent =
-                    locationData.longitude;
-
-                accuracyElement.textContent =
-                    locationData.accuracy +
-                    " meter";
-
-                waktuElement.textContent =
-                    locationData.waktu;
-
-
-                resultElement.classList.remove(
-                    "hidden"
-                );
-
-
-                // -------------------------------------
-                // STATUS
-                // -------------------------------------
-
-                setStatus(
-                    "Lokasi berhasil diperoleh. Periksa data lalu klik SIMPAN LOG.",
-                    "success"
-                );
-
-
-                // -------------------------------------
-                // ENABLE SAVE
-                // -------------------------------------
-
-                saveButton.disabled = false;
-
-                locationButton.disabled = false;
-
-            },
-
-            function (error) {
-
-                locationButton.disabled = false;
-
-                saveButton.disabled = true;
-
-
-                let message =
-                    "Gagal mendapatkan lokasi.";
-
-
-                switch (error.code) {
-
-                    case error.PERMISSION_DENIED:
-
-                        message =
-                            "Izin lokasi ditolak. Aktifkan izin lokasi pada browser.";
-
-                        break;
-
-
-                    case error.POSITION_UNAVAILABLE:
-
-                        message =
-                            "Informasi lokasi tidak tersedia.";
-
-                        break;
-
-
-                    case error.TIMEOUT:
-
-                        message =
-                            "Pengambilan lokasi timeout.";
-
-                        break;
-
-
-                    default:
-
-                        message =
-                            "Terjadi kesalahan saat mengambil lokasi.";
-
-                }
-
-
-                setStatus(
-                    message,
-                    "error"
-                );
-
-            },
-
-            {
-
-                enableHighAccuracy: true,
-
-                timeout: 30000,
-
-                maximumAge: 0
-
-            }
-
-        );
-
-    }
-);
-
-
-// =====================================================
-// SIMPAN LOG
-// =====================================================
-
-saveButton.addEventListener(
-    "click",
-    async function () {
-
-        // ---------------------------------------------
-        // VALIDASI
-        // ---------------------------------------------
-
-        if (
-            !locationData.task ||
-            !locationData.latitude ||
-            !locationData.longitude
-        ) {
-
-            setStatus(
-                "Data lokasi belum tersedia.",
-                "error"
-            );
-
-            return;
-        }
-
-
-        // ---------------------------------------------
-        // BUTTON
-        // ---------------------------------------------
-
-        saveButton.disabled = true;
-
-        locationButton.disabled = true;
-
-
-        setStatus(
-            "Mengirim data ke Google Spreadsheet...",
-            "loading"
-        );
-
-
-        // ---------------------------------------------
-        // PARAMETER
-        // ---------------------------------------------
-
-        const params =
-            new URLSearchParams({
-
-                task:
-                    locationData.task,
-
-                latitude:
-                    locationData.latitude,
-
-                longitude:
-                    locationData.longitude,
-
-                accuracy:
-                    locationData.accuracy,
-
-                waktu:
-                    locationData.waktu
-
-            });
-
-
-        // ---------------------------------------------
-        // URL
-        // ---------------------------------------------
-
-        const requestUrl =
-            GOOGLE_SCRIPT_URL +
-            "?" +
-            params.toString();
-
-
-        // DEBUG
-        console.log(
-            "REQUEST URL:",
-            requestUrl
-        );
-
-        console.log(
-            "TASK:",
-            locationData.task
-        );
-
-        console.log(
-            "LATITUDE:",
-            locationData.latitude
-        );
-
-        console.log(
-            "LONGITUDE:",
-            locationData.longitude
-        );
-
-        console.log(
-            "ACCURACY:",
-            locationData.accuracy
-        );
-
-        console.log(
-            "WAKTU:",
-            locationData.waktu
-        );
-
-
-        // ---------------------------------------------
-        // SEND REQUEST
-        // ---------------------------------------------
-
-        try {
-
-            const response =
-                await fetch(
-                    requestUrl,
-                    {
-
-                        method: "GET",
-
-                        cache: "no-cache"
-
-                    }
-                );
-
-
-            const text =
-                await response.text();
-
-
-            console.log(
-                "SERVER RESPONSE:",
-                text
-            );
-
-
-            let result;
-
-
-            try {
-
-                result =
-                    JSON.parse(text);
-
-            } catch (jsonError) {
-
-                throw new Error(
-                    "Response Google Apps Script bukan JSON: " +
-                    text
-                );
-
-            }
-
-
-            // -----------------------------------------
-            // RESPONSE ERROR
-            // -----------------------------------------
-
-            if (
-                result.status !==
-                "success"
-            ) {
-
-                throw new Error(
-                    result.message ||
-                    "Google Apps Script gagal menyimpan data."
-                );
-
-            }
-
-
-            // -----------------------------------------
-            // SUCCESS
-            // -----------------------------------------
-
-            setStatus(
-                "Data berhasil disimpan ke Google Spreadsheet.",
-                "success"
-            );
-
-
-            // -----------------------------------------
-            // DISABLE SAVE
-            // -----------------------------------------
-
-            saveButton.disabled = true;
-
-            locationButton.disabled = false;
-
-
-        } catch (error) {
-
-            console.error(
-                "SAVE ERROR:",
-                error
-            );
-
-
-            setStatus(
-                "Gagal mengirim data: " +
-                error.message,
-                "error"
-            );
-
-
-            saveButton.disabled = false;
-
-            locationButton.disabled = false;
-
-        }
-
-    }
-);
-
-
-// =====================================================
-// FORMAT DATETIME
-// =====================================================
-
-function formatDateTime(date) {
-
-    const day =
-        String(
-            date.getDate()
-        ).padStart(2, "0");
-
-
-    const month =
-        String(
-            date.getMonth() + 1
-        ).padStart(2, "0");
-
-
-    const year =
-        date.getFullYear();
-
-
-    const hours =
-        String(
-            date.getHours()
-        ).padStart(2, "0");
-
-
-    const minutes =
-        String(
-            date.getMinutes()
-        ).padStart(2, "0");
-
-
-    const seconds =
-        String(
-            date.getSeconds()
-        ).padStart(2, "0");
-
-
-    return (
-        day +
-        "/" +
-        month +
-        "/" +
-        year +
-        " " +
-        hours +
-        ":" +
-        minutes +
-        ":" +
-        seconds
-    );
-
+    color: #111827;
 }
 
 
-// =====================================================
-// STATUS
-// =====================================================
+/* =========================
+   CONTAINER
+   ========================= */
 
-function setStatus(
-    message,
-    type
-) {
+.container {
+    width: 100%;
+    min-height: 100vh;
 
-    statusElement.textContent =
-        message;
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+}
 
 
-    if (type === "success") {
+/* =========================
+   CARD
+   ========================= */
 
-        statusElement.style.background =
-            "#dcfce7";
+.card {
+    width: 100%;
+    max-width: 500px;
 
-        statusElement.style.color =
-            "#166534";
+    background: #ffffff;
 
+    padding: 30px;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.08),
+        0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+
+/* =========================
+   HEADER
+   ========================= */
+
+.header {
+    margin-bottom: 28px;
+}
+
+h1 {
+    margin: 0;
+
+    text-align: center;
+
+    font-size: 28px;
+
+    line-height: 1.3;
+
+    color: #111827;
+}
+
+.subtitle {
+    margin: 8px 0 0;
+
+    text-align: center;
+
+    color: #6b7280;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================
+   FORM
+   ========================= */
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    color: #374151;
+}
+
+input {
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #111827;
+
+    font-size: 16px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+input::placeholder {
+    color: #9ca3af;
+}
+
+input:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+
+/* =========================
+   BUTTON
+   ========================= */
+
+button {
+    width: 100%;
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 14px;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.1s ease;
+}
+
+button:active:not(:disabled) {
+    transform: scale(0.99);
+}
+
+button:disabled {
+    background: #9ca3af !important;
+
+    color: #ffffff;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================
+   PRIMARY BUTTON
+   ========================= */
+
+.primary-button {
+    background: #2563eb;
+
+    color: #ffffff;
+}
+
+.primary-button:hover:not(:disabled) {
+    background: #1d4ed8;
+}
+
+
+/* =========================
+   STATUS
+   ========================= */
+
+.status {
+    width: 100%;
+
+    margin-top: 18px;
+
+    padding: 12px 14px;
+
+    border-radius: 8px;
+
+    background: #f3f4f6;
+
+    color: #374151;
+
+    text-align: center;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================
+   RESULT
+   ========================= */
+
+.result {
+    width: 100%;
+
+    margin-top: 18px;
+
+    border:
+        1px solid #e5e7eb;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    background: #ffffff;
+}
+
+.result-header {
+    padding: 12px 14px;
+
+    background: #f9fafb;
+
+    border-bottom:
+        1px solid #e5e7eb;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    color: #374151;
+}
+
+.data-row {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    gap: 20px;
+
+    padding: 12px 14px;
+
+    border-bottom:
+        1px solid #e5e7eb;
+}
+
+.data-row:last-child {
+    border-bottom: none;
+}
+
+.data-row span {
+    flex: 0 0 auto;
+
+    color: #6b7280;
+
+    font-size: 14px;
+}
+
+.data-row strong {
+    flex: 1;
+
+    text-align: right;
+
+    color: #111827;
+
+    font-size: 14px;
+
+    word-break: break-word;
+}
+
+
+/* =========================
+   SAVE BUTTON
+   ========================= */
+
+.save-button {
+    margin-top: 18px;
+
+    background: #16a34a;
+
+    color: #ffffff;
+}
+
+.save-button:hover:not(:disabled) {
+    background: #15803d;
+}
+
+
+/* =========================
+   HIDDEN
+   ========================= */
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 600px) {
+
+    .container {
+        padding: 14px;
+
+        align-items: flex-start;
     }
 
-    else if (type === "error") {
+    .card {
+        margin-top: 20px;
 
-        statusElement.style.background =
-            "#fee2e2";
+        padding: 22px 18px;
 
-        statusElement.style.color =
-            "#991b1b";
-
+        border-radius: 14px;
     }
 
-    else if (type === "loading") {
-
-        statusElement.style.background =
-            "#dbeafe";
-
-        statusElement.style.color =
-            "#1e40af";
-
+    h1 {
+        font-size: 24px;
     }
 
-    else {
+    .subtitle {
+        font-size: 13px;
+    }
 
-        statusElement.style.background =
-            "#f3f4f6";
+    .data-row {
+        gap: 10px;
+    }
 
-        statusElement.style.color =
-            "#374151";
-
+    .data-row span,
+    .data-row strong {
+        font-size: 13px;
     }
 
 }
