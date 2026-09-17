@@ -2,35 +2,16 @@ const GOOGLE_SCRIPT_URL =
     "https://script.google.com/macros/s/AKfycbxAaabjNyiGoaJlllP85BaWnwNthj7F-Xt0wUNuzVqUVg5aodiiqa1fcu4xmfK_83-K/exec";
 
 
-const taskInput =
-    document.getElementById("task");
-
-const locationButton =
-    document.getElementById("locationButton");
-
-const saveButton =
-    document.getElementById("saveButton");
-
-const statusElement =
-    document.getElementById("status");
-
-const resultElement =
-    document.getElementById("result");
-
-const resultTask =
-    document.getElementById("resultTask");
-
-const latitudeElement =
-    document.getElementById("latitude");
-
-const longitudeElement =
-    document.getElementById("longitude");
-
-const accuracyElement =
-    document.getElementById("accuracy");
-
-const waktuElement =
-    document.getElementById("waktu");
+const taskInput = document.getElementById("task");
+const locationButton = document.getElementById("locationButton");
+const saveButton = document.getElementById("saveButton");
+const statusElement = document.getElementById("status");
+const resultElement = document.getElementById("result");
+const resultTask = document.getElementById("resultTask");
+const latitudeElement = document.getElementById("latitude");
+const longitudeElement = document.getElementById("longitude");
+const accuracyElement = document.getElementById("accuracy");
+const waktuElement = document.getElementById("waktu");
 
 
 let locationData = {
@@ -46,38 +27,21 @@ let locationData = {
    AMBIL LOKASI
    ========================================== */
 
-locationButton.addEventListener("click", () => {
+locationButton.addEventListener("click", function () {
 
-    const task =
-        taskInput.value.trim();
-
+    const task = taskInput.value.trim();
 
     if (!task) {
-
         setStatus(
             "Task / kegiatan wajib diisi.",
             "error"
         );
 
         taskInput.focus();
-
         return;
     }
-
-
-    if (!window.isSecureContext) {
-
-        setStatus(
-            "Aplikasi harus dibuka melalui HTTPS.",
-            "error"
-        );
-
-        return;
-    }
-
 
     if (!navigator.geolocation) {
-
         setStatus(
             "Browser tidak mendukung Geolocation.",
             "error"
@@ -86,12 +50,10 @@ locationButton.addEventListener("click", () => {
         return;
     }
 
-
     setStatus(
         "Sedang mengambil lokasi...",
         "loading"
     );
-
 
     locationButton.disabled = true;
     saveButton.disabled = true;
@@ -99,7 +61,7 @@ locationButton.addEventListener("click", () => {
 
     navigator.geolocation.getCurrentPosition(
 
-        (position) => {
+        function (position) {
 
             const latitude =
                 position.coords.latitude;
@@ -115,20 +77,11 @@ locationButton.addEventListener("click", () => {
 
 
             locationData = {
-
                 task: task,
-
-                latitude:
-                    latitude.toFixed(8),
-
-                longitude:
-                    longitude.toFixed(8),
-
-                accuracy:
-                    accuracy.toFixed(2),
-
-                waktu:
-                    waktu
+                latitude: latitude.toFixed(8),
+                longitude: longitude.toFixed(8),
+                accuracy: accuracy.toFixed(2),
+                waktu: waktu
             };
 
 
@@ -142,8 +95,7 @@ locationButton.addEventListener("click", () => {
                 locationData.longitude;
 
             accuracyElement.textContent =
-                locationData.accuracy +
-                " meter";
+                locationData.accuracy + " meter";
 
             waktuElement.textContent =
                 locationData.waktu;
@@ -155,7 +107,7 @@ locationButton.addEventListener("click", () => {
 
 
             setStatus(
-                "Lokasi berhasil diperoleh. Periksa data lalu klik SIMPAN LOG.",
+                "Lokasi berhasil diperoleh. Klik SIMPAN LOG.",
                 "success"
             );
 
@@ -165,60 +117,43 @@ locationButton.addEventListener("click", () => {
         },
 
 
-        (error) => {
+        function (error) {
 
             locationButton.disabled = false;
             saveButton.disabled = true;
 
 
-            let message;
+            let message =
+                "Gagal mengambil lokasi.";
 
 
-            switch (error.code) {
-
-                case 1:
-
-                    message =
-                        "Izin lokasi ditolak. Aktifkan izin lokasi pada browser.";
-
-                    break;
-
-
-                case 2:
-
-                    message =
-                        "Informasi lokasi tidak tersedia. Pastikan GPS/lokasi perangkat aktif.";
-
-                    break;
-
-
-                case 3:
-
-                    message =
-                        "Pengambilan lokasi timeout. Coba kembali.";
-
-                    break;
-
-
-                default:
-
-                    message =
-                        "Terjadi kesalahan saat mengambil lokasi.";
+            if (error.code === 1) {
+                message =
+                    "Izin lokasi ditolak.";
             }
 
+            else if (error.code === 2) {
+                message =
+                    "Lokasi tidak tersedia.";
+            }
 
-            console.error(
-                "GEOLOCATION ERROR:",
-                error
-            );
+            else if (error.code === 3) {
+                message =
+                    "Pengambilan lokasi timeout.";
+            }
 
 
             setStatus(
                 message,
                 "error"
             );
-        },
 
+
+            console.error(
+                "GEOLOCATION ERROR:",
+                error
+            );
+        },
 
         {
             enableHighAccuracy: true,
@@ -233,7 +168,7 @@ locationButton.addEventListener("click", () => {
    SIMPAN LOG
    ========================================== */
 
-saveButton.addEventListener("click", () => {
+saveButton.addEventListener("click", function () {
 
     if (
         !locationData.task ||
@@ -264,31 +199,31 @@ saveButton.addEventListener("click", () => {
         new URLSearchParams();
 
 
-    params.append(
+    params.set(
         "task",
         locationData.task
     );
 
 
-    params.append(
+    params.set(
         "latitude",
         locationData.latitude
     );
 
 
-    params.append(
+    params.set(
         "longitude",
         locationData.longitude
     );
 
 
-    params.append(
+    params.set(
         "accuracy",
         locationData.accuracy
     );
 
 
-    params.append(
+    params.set(
         "waktu",
         locationData.waktu
     );
@@ -301,47 +236,41 @@ saveButton.addEventListener("click", () => {
 
 
     console.log(
-        "REQUEST URL:",
+        "GOOGLE SCRIPT URL:",
         requestUrl
     );
 
 
     /*
-     * Kirim langsung menggunakan iframe.
-     * Tidak menggunakan fetch().
-     * Tidak menggunakan JSON.parse().
+     * Buat iframe baru.
      */
 
-    let iframe =
-        document.getElementById(
-            "googleScriptFrame"
-        );
+    const iframe =
+        document.createElement("iframe");
 
 
-    if (!iframe) {
-
-        iframe =
-            document.createElement("iframe");
-
-        iframe.id =
-            "googleScriptFrame";
-
-        iframe.name =
-            "googleScriptFrame";
-
-        iframe.style.display =
-            "none";
-
-        document.body.appendChild(
-            iframe
-        );
-    }
+    iframe.style.display =
+        "none";
 
 
-    iframe.onload = () => {
+    iframe.src =
+        requestUrl;
+
+
+    document.body.appendChild(
+        iframe
+    );
+
+
+    /*
+     * Apps Script akan menerima GET
+     * dan menjalankan doGet().
+     */
+
+    setTimeout(function () {
 
         setStatus(
-            "Data berhasil dikirim ke Google Spreadsheet.",
+            "Data telah dikirim. Periksa Google Spreadsheet.",
             "success"
         );
 
@@ -350,14 +279,7 @@ saveButton.addEventListener("click", () => {
         locationButton.disabled = false;
 
 
-        console.log(
-            "Request Google Apps Script selesai."
-        );
-    };
-
-
-    iframe.src =
-        requestUrl;
+    }, 2500);
 });
 
 
@@ -421,56 +343,45 @@ function formatDateTime(date) {
    STATUS
    ========================================== */
 
-function setStatus(
-    message,
-    type
-) {
+function setStatus(message, type) {
 
     statusElement.textContent =
         message;
 
 
-    switch (type) {
+    if (type === "success") {
 
-        case "success":
+        statusElement.style.background =
+            "#dcfce7";
 
-            statusElement.style.background =
-                "#dcfce7";
+        statusElement.style.color =
+            "#166534";
+    }
 
-            statusElement.style.color =
-                "#166534";
+    else if (type === "error") {
 
-            break;
+        statusElement.style.background =
+            "#fee2e2";
 
+        statusElement.style.color =
+            "#991b1b";
+    }
 
-        case "error":
+    else if (type === "loading") {
 
-            statusElement.style.background =
-                "#fee2e2";
+        statusElement.style.background =
+            "#dbeafe";
 
-            statusElement.style.color =
-                "#991b1b";
+        statusElement.style.color =
+            "#1e40af";
+    }
 
-            break;
+    else {
 
+        statusElement.style.background =
+            "#f3f4f6";
 
-        case "loading":
-
-            statusElement.style.background =
-                "#dbeafe";
-
-            statusElement.style.color =
-                "#1e40af";
-
-            break;
-
-
-        default:
-
-            statusElement.style.background =
-                "#f3f4f6";
-
-            statusElement.style.color =
-                "#374151";
+        statusElement.style.color =
+            "#374151";
     }
 }
