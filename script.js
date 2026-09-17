@@ -1,7 +1,7 @@
 const GOOGLE_SCRIPT_URL =
     "https://script.google.com/macros/s/AKfycbxAaabjNyiGoaJlllP85BaWnwNthj7F-Xt0wUNuzVqUVg5aodiiqa1fcu4xmfK_83-K/exec";
 
-console.log("SCRIPT VERSION: 2026-09-17-01");
+console.log("SCRIPT VERSION: 2026-09-17-02");
 
 const taskInput = document.getElementById("task");
 const locationButton = document.getElementById("locationButton");
@@ -82,7 +82,6 @@ locationButton.addEventListener("click", function () {
 
 
     locationButton.disabled = true;
-
     saveButton.disabled = true;
 
     setStatus(
@@ -122,7 +121,9 @@ locationButton.addEventListener("click", function () {
             };
 
 
-            // Tampilkan hasil
+            // =========================================
+            // TAMPILKAN DATA
+            // =========================================
 
             resultTask.textContent =
                 task;
@@ -144,7 +145,6 @@ locationButton.addEventListener("click", function () {
 
 
             saveButton.disabled = false;
-
             locationButton.disabled = false;
 
 
@@ -158,7 +158,6 @@ locationButton.addEventListener("click", function () {
         function (error) {
 
             locationButton.disabled = false;
-
             saveButton.disabled = true;
 
 
@@ -169,18 +168,24 @@ locationButton.addEventListener("click", function () {
             switch (error.code) {
 
                 case 1:
+
                     message =
                         "Izin lokasi ditolak. Silakan izinkan akses lokasi pada browser.";
+
                     break;
 
                 case 2:
+
                     message =
                         "Lokasi tidak tersedia.";
+
                     break;
 
                 case 3:
+
                     message =
                         "Waktu pengambilan lokasi habis.";
+
                     break;
 
             }
@@ -192,6 +197,7 @@ locationButton.addEventListener("click", function () {
 
 
         {
+
             enableHighAccuracy: true,
 
             timeout: 30000,
@@ -222,7 +228,6 @@ saveButton.addEventListener("click", function () {
 
 
     saveButton.disabled = true;
-
     locationButton.disabled = true;
 
 
@@ -232,116 +237,96 @@ saveButton.addEventListener("click", function () {
 
 
     // =================================================
-    // BUAT HIDDEN IFRAME
+    // BUAT URL
     // =================================================
 
-    let iframe =
-        document.getElementById(
-            "googleScriptFrame"
-        );
+    const params = new URLSearchParams();
+
+    params.append(
+        "task",
+        locationData.task
+    );
+
+    params.append(
+        "latitude",
+        locationData.latitude
+    );
+
+    params.append(
+        "longitude",
+        locationData.longitude
+    );
+
+    params.append(
+        "accuracy",
+        locationData.accuracy
+    );
+
+    params.append(
+        "waktu",
+        locationData.waktu
+    );
 
 
-    if (!iframe) {
-
-        iframe =
-            document.createElement("iframe");
-
-        iframe.id =
-            "googleScriptFrame";
-
-        iframe.name =
-            "googleScriptFrame";
-
-        iframe.style.display =
-            "none";
-
-        document.body.appendChild(
-            iframe
-        );
-
-    }
+    // Cache buster
+    params.append(
+        "_",
+        Date.now()
+    );
 
 
-    // =================================================
-    // BUAT FORM GET
-    // =================================================
-
-    const form =
-        document.createElement("form");
-
-    form.method = "GET";
-
-    form.action =
-        GOOGLE_SCRIPT_URL;
-
-    form.target =
-        "googleScriptFrame";
-
-    form.style.display =
-        "none";
+    const requestUrl =
+        GOOGLE_SCRIPT_URL +
+        "?" +
+        params.toString();
 
 
-    // =================================================
-    // DATA
-    // =================================================
-
-    const fields = {
-
-        task:
-            locationData.task,
-
-        latitude:
-            locationData.latitude,
-
-        longitude:
-            locationData.longitude,
-
-        accuracy:
-            locationData.accuracy,
-
-        waktu:
-            locationData.waktu
-
-    };
-
-
-    Object.keys(fields).forEach(function (key) {
-
-        const input =
-            document.createElement("input");
-
-        input.type =
-            "hidden";
-
-        input.name =
-            key;
-
-        input.value =
-            fields[key];
-
-        form.appendChild(
-            input
-        );
-
-    });
-
-
-    // =================================================
-    // SUBMIT
-    // =================================================
-
-    document.body.appendChild(
-        form
+    console.log(
+        "REQUEST URL:",
+        requestUrl
     );
 
 
     console.log(
-        "Mengirim data:",
-        fields
+        "DATA YANG DIKIRIM:",
+        {
+            task: locationData.task,
+            latitude: locationData.latitude,
+            longitude: locationData.longitude,
+            accuracy: locationData.accuracy,
+            waktu: locationData.waktu
+        }
     );
 
 
-    form.submit();
+    // =================================================
+    // KIRIM GET REQUEST
+    // MENGGUNAKAN IMAGE BEACON
+    // =================================================
+
+    const beacon =
+        new Image();
+
+    beacon.onload = function () {
+
+        console.log(
+            "Google Apps Script request selesai."
+        );
+
+    };
+
+
+    beacon.onerror = function () {
+
+        console.log(
+            "Response tidak dapat dibaca browser, tetapi request sudah dikirim."
+        );
+
+    };
+
+
+    beacon.src =
+        requestUrl;
 
 
     // =================================================
@@ -351,7 +336,7 @@ saveButton.addEventListener("click", function () {
     setTimeout(function () {
 
         setStatus(
-            "Data berhasil dikirim. Silakan cek Google Spreadsheet."
+            "Data telah dikirim ke Google Spreadsheet."
         );
 
 
@@ -360,15 +345,9 @@ saveButton.addEventListener("click", function () {
         locationButton.disabled = false;
 
 
-        // Bersihkan form
-
-        if (form.parentNode) {
-
-            form.parentNode.removeChild(
-                form
-            );
-
-        }
+        console.log(
+            "SELESAI MENGIRIM DATA"
+        );
 
     }, 3000);
 
