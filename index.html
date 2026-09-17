@@ -10,7 +10,7 @@
 
     <meta
         name="theme-color"
-        content="#1f2937"
+        content="#2563eb"
     >
 
     <title>Personal Travel Log</title>
@@ -23,19 +23,20 @@
 
 <body>
 
-    <div class="container">
+    <main class="container">
 
-        <div class="card">
+        <section class="card">
 
-            <h1>Personal Travel Log</h1>
+            <div class="header">
+                <h1>Personal Travel Log</h1>
 
-            <p class="subtitle">
-                Catat lokasi perjalanan Anda
-            </p>
+                <p class="subtitle">
+                    Catat lokasi perjalanan dan kegiatan Anda
+                </p>
+            </div>
 
 
             <!-- TASK -->
-
             <div class="form-group">
 
                 <label for="task">
@@ -52,18 +53,17 @@
             </div>
 
 
-            <!-- BUTTON -->
-
+            <!-- BUTTON AMBIL LOKASI -->
             <button
                 id="locationButton"
                 type="button"
+                class="primary-button"
             >
                 AMBIL LOKASI
             </button>
 
 
             <!-- STATUS -->
-
             <div
                 id="status"
                 class="status"
@@ -72,12 +72,16 @@
             </div>
 
 
-            <!-- RESULT -->
-
+            <!-- HASIL LOKASI -->
             <div
                 id="result"
                 class="result hidden"
             >
+
+                <div class="result-header">
+                    <span>Data Lokasi</span>
+                </div>
+
 
                 <div class="data-row">
 
@@ -136,8 +140,7 @@
             </div>
 
 
-            <!-- SAVE BUTTON -->
-
+            <!-- BUTTON SIMPAN -->
             <button
                 id="saveButton"
                 type="button"
@@ -147,9 +150,9 @@
                 SIMPAN LOG
             </button>
 
-        </div>
+        </section>
 
-    </div>
+    </main>
 
 
     <script src="script.js"></script>
