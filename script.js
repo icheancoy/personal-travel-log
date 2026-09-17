@@ -3,7 +3,7 @@ const GOOGLE_SCRIPT_URL =
 
 
 console.log(
-    "SCRIPT VERSION: 2026-09-17-FIX-01"
+    "SCRIPT VERSION: 2026-09-17-FINAL-01"
 );
 
 
@@ -42,6 +42,10 @@ const waktuBox =
     document.getElementById("waktu");
 
 
+// =====================================================
+// DATA LOKASI
+// =====================================================
+
 let locationData = null;
 
 
@@ -51,8 +55,12 @@ let locationData = null;
 
 function setStatus(message) {
 
-    statusBox.textContent =
-        message;
+    if (statusBox) {
+
+        statusBox.textContent =
+            message;
+
+    }
 
 }
 
@@ -91,6 +99,34 @@ function formatDateTime(date) {
 
 
 // =====================================================
+// CEK ELEMENT
+// =====================================================
+
+if (
+    !taskInput ||
+    !locationButton ||
+    !saveButton ||
+    !statusBox ||
+    !resultBox ||
+    !resultTask ||
+    !latitudeBox ||
+    !longitudeBox ||
+    !accuracyBox ||
+    !waktuBox
+) {
+
+    console.error(
+        "Ada element HTML yang tidak ditemukan."
+    );
+
+    setStatus(
+        "Error: struktur HTML tidak lengkap."
+    );
+
+}
+
+
+// =====================================================
 // AMBIL LOKASI
 // =====================================================
 
@@ -102,6 +138,10 @@ locationButton.addEventListener(
             taskInput.value.trim();
 
 
+        // -----------------------------------------------
+        // VALIDASI TASK
+        // -----------------------------------------------
+
         if (!task) {
 
             setStatus(
@@ -111,28 +151,46 @@ locationButton.addEventListener(
             taskInput.focus();
 
             return;
+
         }
 
 
-        if (!navigator.geolocation) {
+        // -----------------------------------------------
+        // CEK GEOLOCATION
+        // -----------------------------------------------
+
+        if (
+            !navigator.geolocation
+        ) {
 
             setStatus(
                 "Browser tidak mendukung GPS / Geolocation."
             );
 
             return;
+
         }
 
 
-        locationButton.disabled = true;
+        // -----------------------------------------------
+        // DISABLE BUTTON
+        // -----------------------------------------------
 
-        saveButton.disabled = true;
+        locationButton.disabled =
+            true;
+
+        saveButton.disabled =
+            true;
 
 
         setStatus(
             "Sedang mengambil lokasi..."
         );
 
+
+        // -----------------------------------------------
+        // AMBIL GPS
+        // -----------------------------------------------
 
         navigator.geolocation.getCurrentPosition(
 
@@ -153,9 +211,9 @@ locationButton.addEventListener(
                     );
 
 
-                // =====================================
+                // -----------------------------------------
                 // SIMPAN DATA
-                // =====================================
+                // -----------------------------------------
 
                 locationData = {
 
@@ -177,9 +235,15 @@ locationButton.addEventListener(
                 };
 
 
-                // =====================================
-                // TAMPILKAN DATA
-                // =====================================
+                console.log(
+                    "LOCATION DATA:",
+                    locationData
+                );
+
+
+                // -----------------------------------------
+                // TAMPILKAN
+                // -----------------------------------------
 
                 resultTask.textContent =
                     task;
@@ -202,6 +266,10 @@ locationButton.addEventListener(
                     "hidden"
                 );
 
+
+                // -----------------------------------------
+                // ENABLE SAVE
+                // -----------------------------------------
 
                 locationButton.disabled =
                     false;
@@ -235,7 +303,7 @@ locationButton.addEventListener(
                     case 1:
 
                         message =
-                            "Izin lokasi ditolak. Silakan izinkan akses lokasi pada browser.";
+                            "Izin lokasi ditolak. Izinkan lokasi pada browser.";
 
                         break;
 
@@ -256,6 +324,12 @@ locationButton.addEventListener(
                         break;
 
                 }
+
+
+                console.error(
+                    "GEOLOCATION ERROR:",
+                    error
+                );
 
 
                 setStatus(
@@ -292,6 +366,10 @@ saveButton.addEventListener(
     "click",
     function () {
 
+        // -----------------------------------------------
+        // VALIDASI
+        // -----------------------------------------------
+
         if (!locationData) {
 
             setStatus(
@@ -299,8 +377,13 @@ saveButton.addEventListener(
             );
 
             return;
+
         }
 
+
+        // -----------------------------------------------
+        // DISABLE BUTTON
+        // -----------------------------------------------
 
         saveButton.disabled =
             true;
@@ -320,9 +403,9 @@ saveButton.addEventListener(
         );
 
 
-        // =============================================
-        // BUAT / AMBIL IFRAME
-        // =============================================
+        // -----------------------------------------------
+        // IFRAME
+        // -----------------------------------------------
 
         let iframe =
             document.getElementById(
@@ -353,9 +436,9 @@ saveButton.addEventListener(
         }
 
 
-        // =============================================
-        // BUAT FORM
-        // =============================================
+        // -----------------------------------------------
+        // FORM
+        // -----------------------------------------------
 
         const form =
             document.createElement(
@@ -376,9 +459,9 @@ saveButton.addEventListener(
             "none";
 
 
-        // =============================================
-        // DATA
-        // =============================================
+        // -----------------------------------------------
+        // PARAMETER
+        // -----------------------------------------------
 
         const fields = {
 
@@ -415,7 +498,9 @@ saveButton.addEventListener(
                     key;
 
                 input.value =
-                    fields[key];
+                    String(
+                        fields[key]
+                    );
 
                 form.appendChild(
                     input
@@ -425,9 +510,9 @@ saveButton.addEventListener(
         );
 
 
-        // =============================================
+        // -----------------------------------------------
         // SUBMIT
-        // =============================================
+        // -----------------------------------------------
 
         document.body.appendChild(
             form
@@ -435,22 +520,29 @@ saveButton.addEventListener(
 
 
         console.log(
-            "POST KE GOOGLE APPS SCRIPT"
+            "POST KE:",
+            GOOGLE_SCRIPT_URL
+        );
+
+
+        console.log(
+            "FORM DATA:",
+            fields
         );
 
 
         form.submit();
 
 
-        // =============================================
-        // SELESAI
-        // =============================================
+        // -----------------------------------------------
+        // STATUS
+        // -----------------------------------------------
 
         setTimeout(
             function () {
 
                 setStatus(
-                    "Data telah dikirim. Silakan cek Google Spreadsheet."
+                    "Data telah dikirim. Periksa Google Spreadsheet."
                 );
 
 
@@ -459,6 +551,10 @@ saveButton.addEventListener(
 
                 locationButton.disabled =
                     false;
+
+
+                locationData =
+                    null;
 
 
                 if (form.parentNode) {
