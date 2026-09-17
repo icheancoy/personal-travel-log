@@ -2,16 +2,38 @@ const GOOGLE_SCRIPT_URL =
     "https://script.google.com/macros/s/AKfycbxAaabjNyiGoaJlllP85BaWnwNthj7F-Xt0wUNuzVqUVg5aodiiqa1fcu4xmfK_83-K/exec";
 
 
-const taskInput = document.getElementById("task");
-const locationButton = document.getElementById("locationButton");
-const saveButton = document.getElementById("saveButton");
-const statusElement = document.getElementById("status");
-const resultElement = document.getElementById("result");
-const resultTask = document.getElementById("resultTask");
-const latitudeElement = document.getElementById("latitude");
-const longitudeElement = document.getElementById("longitude");
-const accuracyElement = document.getElementById("accuracy");
-const waktuElement = document.getElementById("waktu");
+const taskInput =
+    document.getElementById("task");
+
+const locationButton =
+    document.getElementById("locationButton");
+
+const saveButton =
+    document.getElementById("saveButton");
+
+const statusElement =
+    document.getElementById("status");
+
+const resultElement =
+    document.getElementById("result");
+
+const resultTask =
+    document.getElementById("resultTask");
+
+const latitudeElement =
+    document.getElementById("latitude");
+
+const longitudeElement =
+    document.getElementById("longitude");
+
+const accuracyElement =
+    document.getElementById("accuracy");
+
+const waktuElement =
+    document.getElementById("waktu");
+
+const googleScriptFrame =
+    document.getElementById("googleScriptFrame");
 
 
 let locationData = {
@@ -24,45 +46,30 @@ let locationData = {
 
 
 /* ==========================================
-   CEK ELEMEN
-   ========================================== */
-
-if (
-    !taskInput ||
-    !locationButton ||
-    !saveButton ||
-    !statusElement ||
-    !resultElement ||
-    !resultTask ||
-    !latitudeElement ||
-    !longitudeElement ||
-    !accuracyElement ||
-    !waktuElement
-) {
-    console.error("Elemen HTML tidak ditemukan.");
-}
-
-
-/* ==========================================
    AMBIL LOKASI
    ========================================== */
 
 locationButton.addEventListener("click", () => {
 
-    const task = taskInput.value.trim();
+    const task =
+        taskInput.value.trim();
+
 
     if (!task) {
+
         setStatus(
             "Task / kegiatan wajib diisi.",
             "error"
         );
 
         taskInput.focus();
+
         return;
     }
 
 
     if (!window.isSecureContext) {
+
         setStatus(
             "Aplikasi harus dibuka melalui HTTPS.",
             "error"
@@ -73,6 +80,7 @@ locationButton.addEventListener("click", () => {
 
 
     if (!navigator.geolocation) {
+
         setStatus(
             "Browser tidak mendukung Geolocation.",
             "error"
@@ -86,6 +94,7 @@ locationButton.addEventListener("click", () => {
         "Sedang mengambil lokasi...",
         "loading"
     );
+
 
     locationButton.disabled = true;
     saveButton.disabled = true;
@@ -109,11 +118,20 @@ locationButton.addEventListener("click", () => {
 
 
             locationData = {
+
                 task: task,
-                latitude: latitude.toFixed(8),
-                longitude: longitude.toFixed(8),
-                accuracy: accuracy.toFixed(2),
-                waktu: waktu
+
+                latitude:
+                    latitude.toFixed(8),
+
+                longitude:
+                    longitude.toFixed(8),
+
+                accuracy:
+                    accuracy.toFixed(2),
+
+                waktu:
+                    waktu
             };
 
 
@@ -127,13 +145,16 @@ locationButton.addEventListener("click", () => {
                 locationData.longitude;
 
             accuracyElement.textContent =
-                locationData.accuracy + " meter";
+                locationData.accuracy +
+                " meter";
 
             waktuElement.textContent =
                 locationData.waktu;
 
 
-            resultElement.classList.remove("hidden");
+            resultElement.classList.remove(
+                "hidden"
+            );
 
 
             setStatus(
@@ -159,21 +180,31 @@ locationButton.addEventListener("click", () => {
             switch (error.code) {
 
                 case 1:
+
                     message =
                         "Izin lokasi ditolak. Aktifkan izin lokasi pada browser.";
+
                     break;
+
 
                 case 2:
+
                     message =
                         "Informasi lokasi tidak tersedia. Pastikan GPS/lokasi perangkat aktif.";
+
                     break;
+
 
                 case 3:
+
                     message =
                         "Pengambilan lokasi timeout. Coba kembali.";
+
                     break;
 
+
                 default:
+
                     message =
                         "Terjadi kesalahan saat mengambil lokasi.";
             }
@@ -205,151 +236,111 @@ locationButton.addEventListener("click", () => {
    SIMPAN LOG
    ========================================== */
 
-saveButton.addEventListener("click", async () => {
-
-    if (
-        !locationData.task ||
-        !locationData.latitude ||
-        !locationData.longitude
-    ) {
-
-        setStatus(
-            "Data lokasi belum tersedia.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    saveButton.disabled = true;
-    locationButton.disabled = true;
-
-
-    setStatus(
-        "Mengirim data ke Google Spreadsheet...",
-        "loading"
-    );
-
-
-    const params = new URLSearchParams();
-
-    params.append(
-        "task",
-        locationData.task
-    );
-
-    params.append(
-        "latitude",
-        locationData.latitude
-    );
-
-    params.append(
-        "longitude",
-        locationData.longitude
-    );
-
-    params.append(
-        "accuracy",
-        locationData.accuracy
-    );
-
-    params.append(
-        "waktu",
-        locationData.waktu
-    );
-
-
-    const requestUrl =
-        GOOGLE_SCRIPT_URL +
-        "?" +
-        params.toString();
-
-
-    console.log(
-        "REQUEST URL:",
-        requestUrl
-    );
-
-
-    try {
-
-        const response = await fetch(
-            requestUrl,
-            {
-                method: "GET",
-                cache: "no-store",
-                redirect: "follow"
-            }
-        );
-
-
-        const text =
-            await response.text();
-
-
-        console.log(
-            "SERVER RESPONSE:",
-            text
-        );
-
-
-        let result;
-
-
-        try {
-
-            result =
-                JSON.parse(text);
-
-        } catch (error) {
-
-            throw new Error(
-                "Response Google Apps Script bukan JSON."
-            );
-        }
-
+saveButton.addEventListener(
+    "click",
+    () => {
 
         if (
-            result.status !== "success"
+            !locationData.task ||
+            !locationData.latitude ||
+            !locationData.longitude
         ) {
 
-            throw new Error(
-                result.message ||
-                "Google Apps Script gagal menyimpan data."
+            setStatus(
+                "Data lokasi belum tersedia.",
+                "error"
             );
+
+            return;
         }
-
-
-        setStatus(
-            "Data berhasil disimpan ke Google Spreadsheet.",
-            "success"
-        );
 
 
         saveButton.disabled = true;
-        locationButton.disabled = false;
-
-
-    } catch (error) {
-
-        console.error(
-            "SAVE ERROR:",
-            error
-        );
+        locationButton.disabled = true;
 
 
         setStatus(
-            "Gagal mengirim data: " +
-            error.message,
-            "error"
+            "Mengirim data ke Google Spreadsheet...",
+            "loading"
         );
 
 
-        saveButton.disabled = false;
-        locationButton.disabled = false;
+        const params =
+            new URLSearchParams();
+
+
+        params.append(
+            "task",
+            locationData.task
+        );
+
+
+        params.append(
+            "latitude",
+            locationData.latitude
+        );
+
+
+        params.append(
+            "longitude",
+            locationData.longitude
+        );
+
+
+        params.append(
+            "accuracy",
+            locationData.accuracy
+        );
+
+
+        params.append(
+            "waktu",
+            locationData.waktu
+        );
+
+
+        const requestUrl =
+            GOOGLE_SCRIPT_URL +
+            "?" +
+            params.toString();
+
+
+        console.log(
+            "REQUEST URL:",
+            requestUrl
+        );
+
+
+        /*
+         * Kirim melalui iframe.
+         *
+         * Tidak menggunakan fetch()
+         * sehingga tidak terkena CORS.
+         */
+
+        googleScriptFrame.onload =
+            function () {
+
+                setStatus(
+                    "Data berhasil dikirim ke Google Spreadsheet.",
+                    "success"
+                );
+
+
+                saveButton.disabled = true;
+                locationButton.disabled = false;
+
+
+                console.log(
+                    "Request Google Apps Script selesai."
+                );
+            };
+
+
+        googleScriptFrame.src =
+            requestUrl;
     }
-});
+);
 
 
 /* ==========================================
@@ -359,22 +350,37 @@ saveButton.addEventListener("click", async () => {
 function formatDateTime(date) {
 
     const day =
-        String(date.getDate()).padStart(2, "0");
+        String(
+            date.getDate()
+        ).padStart(2, "0");
+
 
     const month =
-        String(date.getMonth() + 1).padStart(2, "0");
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
+
 
     const year =
         date.getFullYear();
 
+
     const hours =
-        String(date.getHours()).padStart(2, "0");
+        String(
+            date.getHours()
+        ).padStart(2, "0");
+
 
     const minutes =
-        String(date.getMinutes()).padStart(2, "0");
+        String(
+            date.getMinutes()
+        ).padStart(2, "0");
+
 
     const seconds =
-        String(date.getSeconds()).padStart(2, "0");
+        String(
+            date.getSeconds()
+        ).padStart(2, "0");
 
 
     return (
@@ -397,7 +403,10 @@ function formatDateTime(date) {
    STATUS
    ========================================== */
 
-function setStatus(message, type) {
+function setStatus(
+    message,
+    type
+) {
 
     statusElement.textContent =
         message;
