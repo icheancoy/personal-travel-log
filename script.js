@@ -32,9 +32,6 @@ const accuracyElement =
 const waktuElement =
     document.getElementById("waktu");
 
-const googleScriptFrame =
-    document.getElementById("googleScriptFrame");
-
 
 let locationData = {
     task: "",
@@ -236,111 +233,132 @@ locationButton.addEventListener("click", () => {
    SIMPAN LOG
    ========================================== */
 
-saveButton.addEventListener(
-    "click",
-    () => {
+saveButton.addEventListener("click", () => {
 
-        if (
-            !locationData.task ||
-            !locationData.latitude ||
-            !locationData.longitude
-        ) {
+    if (
+        !locationData.task ||
+        !locationData.latitude ||
+        !locationData.longitude
+    ) {
 
-            setStatus(
-                "Data lokasi belum tersedia.",
-                "error"
-            );
+        setStatus(
+            "Data lokasi belum tersedia.",
+            "error"
+        );
 
-            return;
-        }
+        return;
+    }
+
+
+    saveButton.disabled = true;
+    locationButton.disabled = true;
+
+
+    setStatus(
+        "Mengirim data ke Google Spreadsheet...",
+        "loading"
+    );
+
+
+    const params =
+        new URLSearchParams();
+
+
+    params.append(
+        "task",
+        locationData.task
+    );
+
+
+    params.append(
+        "latitude",
+        locationData.latitude
+    );
+
+
+    params.append(
+        "longitude",
+        locationData.longitude
+    );
+
+
+    params.append(
+        "accuracy",
+        locationData.accuracy
+    );
+
+
+    params.append(
+        "waktu",
+        locationData.waktu
+    );
+
+
+    const requestUrl =
+        GOOGLE_SCRIPT_URL +
+        "?" +
+        params.toString();
+
+
+    console.log(
+        "REQUEST URL:",
+        requestUrl
+    );
+
+
+    /*
+     * Kirim langsung menggunakan iframe.
+     * Tidak menggunakan fetch().
+     * Tidak menggunakan JSON.parse().
+     */
+
+    let iframe =
+        document.getElementById(
+            "googleScriptFrame"
+        );
+
+
+    if (!iframe) {
+
+        iframe =
+            document.createElement("iframe");
+
+        iframe.id =
+            "googleScriptFrame";
+
+        iframe.name =
+            "googleScriptFrame";
+
+        iframe.style.display =
+            "none";
+
+        document.body.appendChild(
+            iframe
+        );
+    }
+
+
+    iframe.onload = () => {
+
+        setStatus(
+            "Data berhasil dikirim ke Google Spreadsheet.",
+            "success"
+        );
 
 
         saveButton.disabled = true;
-        locationButton.disabled = true;
-
-
-        setStatus(
-            "Mengirim data ke Google Spreadsheet...",
-            "loading"
-        );
-
-
-        const params =
-            new URLSearchParams();
-
-
-        params.append(
-            "task",
-            locationData.task
-        );
-
-
-        params.append(
-            "latitude",
-            locationData.latitude
-        );
-
-
-        params.append(
-            "longitude",
-            locationData.longitude
-        );
-
-
-        params.append(
-            "accuracy",
-            locationData.accuracy
-        );
-
-
-        params.append(
-            "waktu",
-            locationData.waktu
-        );
-
-
-        const requestUrl =
-            GOOGLE_SCRIPT_URL +
-            "?" +
-            params.toString();
+        locationButton.disabled = false;
 
 
         console.log(
-            "REQUEST URL:",
-            requestUrl
+            "Request Google Apps Script selesai."
         );
+    };
 
 
-        /*
-         * Kirim melalui iframe.
-         *
-         * Tidak menggunakan fetch()
-         * sehingga tidak terkena CORS.
-         */
-
-        googleScriptFrame.onload =
-            function () {
-
-                setStatus(
-                    "Data berhasil dikirim ke Google Spreadsheet.",
-                    "success"
-                );
-
-
-                saveButton.disabled = true;
-                locationButton.disabled = false;
-
-
-                console.log(
-                    "Request Google Apps Script selesai."
-                );
-            };
-
-
-        googleScriptFrame.src =
-            requestUrl;
-    }
-);
+    iframe.src =
+        requestUrl;
+});
 
 
 /* ==========================================
