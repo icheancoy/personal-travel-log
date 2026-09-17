@@ -1,32 +1,59 @@
 const GOOGLE_SCRIPT_URL =
     "https://script.google.com/macros/s/AKfycbxAaabjNyiGoaJlllP85BaWnwNthj7F-Xt0wUNuzVqUVg5aodiiqa1fcu4xmfK_83-K/exec";
 
+console.log("SCRIPT VERSION: 2026-09-17-01");
 
 const taskInput = document.getElementById("task");
 const locationButton = document.getElementById("locationButton");
 const saveButton = document.getElementById("saveButton");
-const statusElement = document.getElementById("status");
 
-const resultElement = document.getElementById("result");
+const statusBox = document.getElementById("status");
+const resultBox = document.getElementById("result");
+
 const resultTask = document.getElementById("resultTask");
-const latitudeElement = document.getElementById("latitude");
-const longitudeElement = document.getElementById("longitude");
-const accuracyElement = document.getElementById("accuracy");
-const waktuElement = document.getElementById("waktu");
+const latitudeBox = document.getElementById("latitude");
+const longitudeBox = document.getElementById("longitude");
+const accuracyBox = document.getElementById("accuracy");
+const waktuBox = document.getElementById("waktu");
+
+let locationData = null;
 
 
-let locationData = {
-    task: "",
-    latitude: "",
-    longitude: "",
-    accuracy: "",
-    waktu: ""
-};
+// =====================================================
+// STATUS
+// =====================================================
+
+function setStatus(message) {
+    statusBox.textContent = message;
+}
 
 
-/* ==========================================
-   AMBIL LOKASI
-   ========================================== */
+// =====================================================
+// FORMAT WAKTU
+// =====================================================
+
+function formatDateTime(date) {
+
+    const options = {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+    };
+
+    return new Intl.DateTimeFormat(
+        "id-ID",
+        options
+    ).format(date);
+}
+
+
+// =====================================================
+// AMBIL LOKASI
+// =====================================================
 
 locationButton.addEventListener("click", function () {
 
@@ -35,8 +62,7 @@ locationButton.addEventListener("click", function () {
     if (!task) {
 
         setStatus(
-            "Task / kegiatan wajib diisi.",
-            "error"
+            "Silakan isi Task / Kegiatan terlebih dahulu."
         );
 
         taskInput.focus();
@@ -48,22 +74,20 @@ locationButton.addEventListener("click", function () {
     if (!navigator.geolocation) {
 
         setStatus(
-            "Browser tidak mendukung Geolocation.",
-            "error"
+            "Browser tidak mendukung GPS / Geolocation."
         );
 
         return;
     }
 
 
-    setStatus(
-        "Sedang mengambil lokasi...",
-        "loading"
-    );
-
-
     locationButton.disabled = true;
+
     saveButton.disabled = true;
+
+    setStatus(
+        "Sedang mengambil lokasi..."
+    );
 
 
     navigator.geolocation.getCurrentPosition(
@@ -79,7 +103,6 @@ locationButton.addEventListener("click", function () {
             const accuracy =
                 position.coords.accuracy;
 
-
             const waktu =
                 formatDateTime(new Date());
 
@@ -88,123 +111,110 @@ locationButton.addEventListener("click", function () {
 
                 task: task,
 
-                latitude:
-                    latitude.toFixed(8),
+                latitude: latitude,
 
-                longitude:
-                    longitude.toFixed(8),
+                longitude: longitude,
 
-                accuracy:
-                    accuracy.toFixed(2),
+                accuracy: accuracy,
 
-                waktu:
-                    waktu
+                waktu: waktu
+
             };
 
 
+            // Tampilkan hasil
+
             resultTask.textContent =
-                locationData.task;
+                task;
+
+            latitudeBox.textContent =
+                latitude.toFixed(6);
+
+            longitudeBox.textContent =
+                longitude.toFixed(6);
+
+            accuracyBox.textContent =
+                accuracy.toFixed(2) + " meter";
+
+            waktuBox.textContent =
+                waktu;
 
 
-            latitudeElement.textContent =
-                locationData.latitude;
-
-
-            longitudeElement.textContent =
-                locationData.longitude;
-
-
-            accuracyElement.textContent =
-                locationData.accuracy +
-                " meter";
-
-
-            waktuElement.textContent =
-                locationData.waktu;
-
-
-            resultElement.classList.remove(
-                "hidden"
-            );
-
-
-            setStatus(
-                "Lokasi berhasil diperoleh. Klik SIMPAN LOG.",
-                "success"
-            );
+            resultBox.classList.remove("hidden");
 
 
             saveButton.disabled = false;
+
             locationButton.disabled = false;
+
+
+            setStatus(
+                "Lokasi berhasil diperoleh. Silakan klik SIMPAN LOG."
+            );
+
         },
 
 
         function (error) {
 
             locationButton.disabled = false;
+
             saveButton.disabled = true;
 
 
             let message =
-                "Gagal mengambil lokasi.";
+                "Gagal mendapatkan lokasi.";
 
 
-            if (error.code === 1) {
+            switch (error.code) {
 
-                message =
-                    "Izin lokasi ditolak.";
+                case 1:
+                    message =
+                        "Izin lokasi ditolak. Silakan izinkan akses lokasi pada browser.";
+                    break;
+
+                case 2:
+                    message =
+                        "Lokasi tidak tersedia.";
+                    break;
+
+                case 3:
+                    message =
+                        "Waktu pengambilan lokasi habis.";
+                    break;
+
             }
 
-            else if (error.code === 2) {
 
-                message =
-                    "Lokasi tidak tersedia.";
-            }
+            setStatus(message);
 
-            else if (error.code === 3) {
-
-                message =
-                    "Pengambilan lokasi timeout.";
-            }
-
-
-            setStatus(
-                message,
-                "error"
-            );
-
-
-            console.error(
-                "GEOLOCATION ERROR:",
-                error
-            );
         },
 
 
         {
             enableHighAccuracy: true,
+
             timeout: 30000,
+
             maximumAge: 0
+
         }
+
     );
+
 });
 
 
-/* ==========================================
-   SIMPAN LOG
-   ========================================== */
+// =====================================================
+// SIMPAN LOG
+// =====================================================
 
 saveButton.addEventListener("click", function () {
 
-    if (
-        !locationData.task ||
-        !locationData.latitude ||
-        !locationData.longitude
-    ) {
+    if (!locationData) {
 
         setStatus(
-            "Data lokasi belum tersedia.",
-            "error"
+            "Lokasi belum tersedia."
         );
 
         return;
@@ -212,235 +222,154 @@ saveButton.addEventListener("click", function () {
 
 
     saveButton.disabled = true;
+
     locationButton.disabled = true;
 
 
     setStatus(
-        "Mengirim data ke Google Spreadsheet...",
-        "loading"
+        "Mengirim data ke Google Spreadsheet..."
     );
 
 
-    const params =
-        new URLSearchParams();
+    // =================================================
+    // BUAT HIDDEN IFRAME
+    // =================================================
+
+    let iframe =
+        document.getElementById(
+            "googleScriptFrame"
+        );
 
 
-    params.set(
-        "task",
-        locationData.task
+    if (!iframe) {
+
+        iframe =
+            document.createElement("iframe");
+
+        iframe.id =
+            "googleScriptFrame";
+
+        iframe.name =
+            "googleScriptFrame";
+
+        iframe.style.display =
+            "none";
+
+        document.body.appendChild(
+            iframe
+        );
+
+    }
+
+
+    // =================================================
+    // BUAT FORM GET
+    // =================================================
+
+    const form =
+        document.createElement("form");
+
+    form.method = "GET";
+
+    form.action =
+        GOOGLE_SCRIPT_URL;
+
+    form.target =
+        "googleScriptFrame";
+
+    form.style.display =
+        "none";
+
+
+    // =================================================
+    // DATA
+    // =================================================
+
+    const fields = {
+
+        task:
+            locationData.task,
+
+        latitude:
+            locationData.latitude,
+
+        longitude:
+            locationData.longitude,
+
+        accuracy:
+            locationData.accuracy,
+
+        waktu:
+            locationData.waktu
+
+    };
+
+
+    Object.keys(fields).forEach(function (key) {
+
+        const input =
+            document.createElement("input");
+
+        input.type =
+            "hidden";
+
+        input.name =
+            key;
+
+        input.value =
+            fields[key];
+
+        form.appendChild(
+            input
+        );
+
+    });
+
+
+    // =================================================
+    // SUBMIT
+    // =================================================
+
+    document.body.appendChild(
+        form
     );
-
-
-    params.set(
-        "latitude",
-        locationData.latitude
-    );
-
-
-    params.set(
-        "longitude",
-        locationData.longitude
-    );
-
-
-    params.set(
-        "accuracy",
-        locationData.accuracy
-    );
-
-
-    params.set(
-        "waktu",
-        locationData.waktu
-    );
-
-
-    const requestUrl =
-        GOOGLE_SCRIPT_URL +
-        "?" +
-        params.toString();
 
 
     console.log(
-        "REQUEST:",
-        requestUrl
+        "Mengirim data:",
+        fields
     );
 
 
-    /*
-     * Buat iframe tersembunyi.
-     */
-
-    const iframe =
-        document.createElement("iframe");
+    form.submit();
 
 
-    iframe.style.position =
-        "fixed";
-
-    iframe.style.width =
-        "1px";
-
-    iframe.style.height =
-        "1px";
-
-    iframe.style.border =
-        "0";
-
-    iframe.style.opacity =
-        "0";
-
-
-    /*
-     * Request langsung ke Apps Script.
-     */
-
-    iframe.src =
-        requestUrl;
-
-
-    document.body.appendChild(
-        iframe
-    );
-
-
-    /*
-     * Beri waktu Apps Script
-     * melakukan appendRow().
-     */
+    // =================================================
+    // TUNGGU REQUEST
+    // =================================================
 
     setTimeout(function () {
 
         setStatus(
-            "Data berhasil dikirim ke Google Spreadsheet.",
-            "success"
+            "Data berhasil dikirim. Silakan cek Google Spreadsheet."
         );
 
 
         saveButton.disabled = true;
+
         locationButton.disabled = false;
 
 
-        /*
-         * Hapus iframe setelah selesai.
-         */
+        // Bersihkan form
 
-        setTimeout(function () {
+        if (form.parentNode) {
 
-            iframe.remove();
+            form.parentNode.removeChild(
+                form
+            );
 
-        }, 3000);
-
+        }
 
     }, 3000);
+
 });
-
-
-/* ==========================================
-   FORMAT WAKTU
-   ========================================== */
-
-function formatDateTime(date) {
-
-    const day =
-        String(
-            date.getDate()
-        ).padStart(2, "0");
-
-
-    const month =
-        String(
-            date.getMonth() + 1
-        ).padStart(2, "0");
-
-
-    const year =
-        date.getFullYear();
-
-
-    const hours =
-        String(
-            date.getHours()
-        ).padStart(2, "0");
-
-
-    const minutes =
-        String(
-            date.getMinutes()
-        ).padStart(2, "0");
-
-
-    const seconds =
-        String(
-            date.getSeconds()
-        ).padStart(2, "0");
-
-
-    return (
-        day +
-        "/" +
-        month +
-        "/" +
-        year +
-        " " +
-        hours +
-        ":" +
-        minutes +
-        ":" +
-        seconds
-    );
-}
-
-
-/* ==========================================
-   STATUS
-   ========================================== */
-
-function setStatus(
-    message,
-    type
-) {
-
-    statusElement.textContent =
-        message;
-
-
-    if (type === "success") {
-
-        statusElement.style.background =
-            "#dcfce7";
-
-        statusElement.style.color =
-            "#166534";
-    }
-
-
-    else if (type === "error") {
-
-        statusElement.style.background =
-            "#fee2e2";
-
-        statusElement.style.color =
-            "#991b1b";
-    }
-
-
-    else if (type === "loading") {
-
-        statusElement.style.background =
-            "#dbeafe";
-
-        statusElement.style.color =
-            "#1e40af";
-    }
-
-
-    else {
-
-        statusElement.style.background =
-            "#f3f4f6";
-
-        statusElement.style.color =
-            "#374151";
-    }
-}
