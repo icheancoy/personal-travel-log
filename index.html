@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -19,7 +21,9 @@
         rel="stylesheet"
         href="style.css"
     >
+
 </head>
+
 
 <body>
 
@@ -28,15 +32,20 @@
         <section class="card">
 
             <div class="header">
-                <h1>Personal Travel Log</h1>
+
+                <h1>
+                    Personal Travel Log
+                </h1>
 
                 <p class="subtitle">
                     Catat lokasi perjalanan dan kegiatan Anda
                 </p>
+
             </div>
 
 
             <!-- TASK -->
+
             <div class="form-group">
 
                 <label for="task">
@@ -53,7 +62,8 @@
             </div>
 
 
-            <!-- BUTTON AMBIL LOKASI -->
+            <!-- AMBIL LOKASI -->
+
             <button
                 id="locationButton"
                 type="button"
@@ -64,6 +74,7 @@
 
 
             <!-- STATUS -->
+
             <div
                 id="status"
                 class="status"
@@ -73,6 +84,7 @@
 
 
             <!-- HASIL LOKASI -->
+
             <div
                 id="result"
                 class="result hidden"
@@ -85,7 +97,9 @@
 
                 <div class="data-row">
 
-                    <span>Task</span>
+                    <span>
+                        Task
+                    </span>
 
                     <strong id="resultTask">
                         -
@@ -96,7 +110,9 @@
 
                 <div class="data-row">
 
-                    <span>Latitude</span>
+                    <span>
+                        Latitude
+                    </span>
 
                     <strong id="latitude">
                         -
@@ -107,7 +123,9 @@
 
                 <div class="data-row">
 
-                    <span>Longitude</span>
+                    <span>
+                        Longitude
+                    </span>
 
                     <strong id="longitude">
                         -
@@ -118,7 +136,9 @@
 
                 <div class="data-row">
 
-                    <span>Accuracy</span>
+                    <span>
+                        Accuracy
+                    </span>
 
                     <strong id="accuracy">
                         -
@@ -129,7 +149,9 @@
 
                 <div class="data-row">
 
-                    <span>Waktu</span>
+                    <span>
+                        Waktu
+                    </span>
 
                     <strong id="waktu">
                         -
@@ -140,7 +162,8 @@
             </div>
 
 
-            <!-- BUTTON SIMPAN -->
+            <!-- SIMPAN -->
+
             <button
                 id="saveButton"
                 type="button"
@@ -150,16 +173,23 @@
                 SIMPAN LOG
             </button>
 
+
         </section>
 
     </main>
-   <iframe
-    name="googlePostFrame"
-    id="googlePostFrame"
-    style="display:none;"
-></iframe>
+
+
+    <!-- GOOGLE APPS SCRIPT POST TARGET -->
+
+    <iframe
+        name="googlePostFrame"
+        id="googlePostFrame"
+        style="display:none;"
+    ></iframe>
+
 
     <script src="script.js"></script>
 
 </body>
+
 </html>
