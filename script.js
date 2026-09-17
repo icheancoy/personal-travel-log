@@ -6,6 +6,7 @@ const taskInput = document.getElementById("task");
 const locationButton = document.getElementById("locationButton");
 const saveButton = document.getElementById("saveButton");
 const statusElement = document.getElementById("status");
+
 const resultElement = document.getElementById("result");
 const resultTask = document.getElementById("resultTask");
 const latitudeElement = document.getElementById("latitude");
@@ -32,16 +33,20 @@ locationButton.addEventListener("click", function () {
     const task = taskInput.value.trim();
 
     if (!task) {
+
         setStatus(
             "Task / kegiatan wajib diisi.",
             "error"
         );
 
         taskInput.focus();
+
         return;
     }
 
+
     if (!navigator.geolocation) {
+
         setStatus(
             "Browser tidak mendukung Geolocation.",
             "error"
@@ -50,10 +55,12 @@ locationButton.addEventListener("click", function () {
         return;
     }
 
+
     setStatus(
         "Sedang mengambil lokasi...",
         "loading"
     );
+
 
     locationButton.disabled = true;
     saveButton.disabled = true;
@@ -72,30 +79,45 @@ locationButton.addEventListener("click", function () {
             const accuracy =
                 position.coords.accuracy;
 
+
             const waktu =
                 formatDateTime(new Date());
 
 
             locationData = {
+
                 task: task,
-                latitude: latitude.toFixed(8),
-                longitude: longitude.toFixed(8),
-                accuracy: accuracy.toFixed(2),
-                waktu: waktu
+
+                latitude:
+                    latitude.toFixed(8),
+
+                longitude:
+                    longitude.toFixed(8),
+
+                accuracy:
+                    accuracy.toFixed(2),
+
+                waktu:
+                    waktu
             };
 
 
             resultTask.textContent =
                 locationData.task;
 
+
             latitudeElement.textContent =
                 locationData.latitude;
+
 
             longitudeElement.textContent =
                 locationData.longitude;
 
+
             accuracyElement.textContent =
-                locationData.accuracy + " meter";
+                locationData.accuracy +
+                " meter";
+
 
             waktuElement.textContent =
                 locationData.waktu;
@@ -128,16 +150,19 @@ locationButton.addEventListener("click", function () {
 
 
             if (error.code === 1) {
+
                 message =
                     "Izin lokasi ditolak.";
             }
 
             else if (error.code === 2) {
+
                 message =
                     "Lokasi tidak tersedia.";
             }
 
             else if (error.code === 3) {
+
                 message =
                     "Pengambilan lokasi timeout.";
             }
@@ -154,6 +179,7 @@ locationButton.addEventListener("click", function () {
                 error
             );
         },
+
 
         {
             enableHighAccuracy: true,
@@ -236,22 +262,38 @@ saveButton.addEventListener("click", function () {
 
 
     console.log(
-        "GOOGLE SCRIPT URL:",
+        "REQUEST:",
         requestUrl
     );
 
 
     /*
-     * Buat iframe baru.
+     * Buat iframe tersembunyi.
      */
 
     const iframe =
         document.createElement("iframe");
 
 
-    iframe.style.display =
-        "none";
+    iframe.style.position =
+        "fixed";
 
+    iframe.style.width =
+        "1px";
+
+    iframe.style.height =
+        "1px";
+
+    iframe.style.border =
+        "0";
+
+    iframe.style.opacity =
+        "0";
+
+
+    /*
+     * Request langsung ke Apps Script.
+     */
 
     iframe.src =
         requestUrl;
@@ -263,14 +305,14 @@ saveButton.addEventListener("click", function () {
 
 
     /*
-     * Apps Script akan menerima GET
-     * dan menjalankan doGet().
+     * Beri waktu Apps Script
+     * melakukan appendRow().
      */
 
     setTimeout(function () {
 
         setStatus(
-            "Data telah dikirim. Periksa Google Spreadsheet.",
+            "Data berhasil dikirim ke Google Spreadsheet.",
             "success"
         );
 
@@ -279,7 +321,18 @@ saveButton.addEventListener("click", function () {
         locationButton.disabled = false;
 
 
-    }, 2500);
+        /*
+         * Hapus iframe setelah selesai.
+         */
+
+        setTimeout(function () {
+
+            iframe.remove();
+
+        }, 3000);
+
+
+    }, 3000);
 });
 
 
@@ -343,7 +396,10 @@ function formatDateTime(date) {
    STATUS
    ========================================== */
 
-function setStatus(message, type) {
+function setStatus(
+    message,
+    type
+) {
 
     statusElement.textContent =
         message;
@@ -358,6 +414,7 @@ function setStatus(message, type) {
             "#166534";
     }
 
+
     else if (type === "error") {
 
         statusElement.style.background =
@@ -367,6 +424,7 @@ function setStatus(message, type) {
             "#991b1b";
     }
 
+
     else if (type === "loading") {
 
         statusElement.style.background =
@@ -375,6 +433,7 @@ function setStatus(message, type) {
         statusElement.style.color =
             "#1e40af";
     }
+
 
     else {
 
