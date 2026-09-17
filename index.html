@@ -1,195 +1,81 @@
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <meta
-        name="theme-color"
-        content="#2563eb"
-    >
-
-    <title>Personal Travel Log</title>
-
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
-
-</head>
-
-
-<body>
-
-    <main class="container">
-
-        <section class="card">
-
-            <div class="header">
-
-                <h1>
-                    Personal Travel Log
-                </h1>
-
-                <p class="subtitle">
-                    Catat lokasi perjalanan dan kegiatan Anda
-                </p>
-
-            </div>
-
-
-            <!-- TASK -->
-
-            <div class="form-group">
-
-                <label for="task">
-                    Task / Kegiatan
-                </label>
-
-                <input
-                    type="text"
-                    id="task"
-                    placeholder="Contoh: Maintenance Server"
-                    autocomplete="off"
-                >
-
-            </div>
-
-
-            <!-- AMBIL LOKASI -->
-
-            <button
-                id="locationButton"
-                type="button"
-                class="primary-button"
-            >
-                AMBIL LOKASI
-            </button>
-
-
-            <!-- STATUS -->
-
-            <div
-                id="status"
-                class="status"
-            >
-                Belum mengambil lokasi.
-            </div>
-
-
-            <!-- HASIL LOKASI -->
-
-            <div
-                id="result"
-                class="result hidden"
-            >
-
-                <div class="result-header">
-                    <span>Data Lokasi</span>
-                </div>
-
-
-                <div class="data-row">
-
-                    <span>
-                        Task
-                    </span>
-
-                    <strong id="resultTask">
-                        -
-                    </strong>
-
-                </div>
-
-
-                <div class="data-row">
-
-                    <span>
-                        Latitude
-                    </span>
-
-                    <strong id="latitude">
-                        -
-                    </strong>
-
-                </div>
-
-
-                <div class="data-row">
-
-                    <span>
-                        Longitude
-                    </span>
-
-                    <strong id="longitude">
-                        -
-                    </strong>
-
-                </div>
-
-
-                <div class="data-row">
-
-                    <span>
-                        Accuracy
-                    </span>
-
-                    <strong id="accuracy">
-                        -
-                    </strong>
-
-                </div>
-
-
-                <div class="data-row">
-
-                    <span>
-                        Waktu
-                    </span>
-
-                    <strong id="waktu">
-                        -
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- SIMPAN -->
-
-            <button
-                id="saveButton"
-                type="button"
-                class="save-button"
-                disabled
-            >
-                SIMPAN LOG
-            </button>
-
-
-        </section>
-
-    </main>
-
-
-    <!-- GOOGLE APPS SCRIPT POST TARGET -->
-
-    <iframe
-        name="googlePostFrame"
-        id="googlePostFrame"
-        style="display:none;"
-    ></iframe>
-
-
-    <script src="script.js"></script>
-
-</body>
-
-</html>
+	<!DOCTYPE html>
+	<html lang="id">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="theme-color" content="#2563eb">
+		<title>Personal Travel Log</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+
+		<main class="container">
+			<section class="card">
+
+				<div class="header">
+					<h1>Personal Travel Log</h1>
+					<p class="subtitle">Catat lokasi perjalanan dan kegiatan Anda</p>
+				</div>
+
+				<!-- TASK -->
+				<div class="form-group">
+					<label for="task">Task / Kegiatan</label>
+					<input
+						type="text"
+						id="task"
+						placeholder="Contoh: Maintenance Server"
+						autocomplete="off"
+					>
+				</div>
+
+				<!-- BUTTON AMBIL LOKASI -->
+				<button id="locationButton" type="button" class="primary-button">
+					AMBIL LOKASI
+				</button>
+
+				<!-- STATUS -->
+				<div id="status" class="status">
+					Belum mengambil lokasi.
+				</div>
+
+				<!-- HASIL LOKASI -->
+				<div id="result" class="result hidden">
+					<div class="result-header">
+						<span>Data Lokasi</span>
+					</div>
+					<div class="data-row">
+						<span>Task</span>
+						<strong id="resultTask">-</strong>
+					</div>
+					<div class="data-row">
+						<span>Latitude</span>
+						<strong id="latitude">-</strong>
+					</div>
+					<div class="data-row">
+						<span>Longitude</span>
+						<strong id="longitude">-</strong>
+					</div>
+					<div class="data-row">
+						<span>Accuracy</span>
+						<strong id="accuracy">-</strong>
+					</div>
+					<div class="data-row">
+						<span>Waktu</span>
+						<strong id="waktu">-</strong>
+					</div>
+				</div>
+
+				<!-- BUTTON SIMPAN -->
+				<button id="saveButton" type="button" class="save-button" disabled>
+					SIMPAN LOG
+				</button>
+
+			</section>
+		</main>
+
+		<!-- Target iframe untuk kirim form tanpa reload halaman (menghindari masalah CORS) -->
+		<iframe name="googleScriptFrame" id="googleScriptFrame" style="display:none;"></iframe>
+
+		<script src="script.js"></script>
+	</body>
+	</html>
