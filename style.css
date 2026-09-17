@@ -11,19 +11,8 @@ body {
 }
 
 body {
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    background:
-        linear-gradient(
-            135deg,
-            #eff6ff 0%,
-            #f8fafc 50%,
-            #eef2ff 100%
-        );
-
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f3f4f6;
     color: #111827;
 }
 
@@ -37,7 +26,6 @@ body {
     min-height: 100vh;
 
     display: flex;
-
     justify-content: center;
     align-items: center;
 
@@ -57,11 +45,10 @@ body {
 
     padding: 30px;
 
-    border-radius: 16px;
+    border-radius: 15px;
 
     box-shadow:
-        0 10px 25px rgba(0, 0, 0, 0.08),
-        0 4px 10px rgba(0, 0, 0, 0.04);
+        0 10px 30px rgba(0, 0, 0, 0.10);
 }
 
 
@@ -134,14 +121,6 @@ input {
     font-size: 16px;
 
     outline: none;
-
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-input::placeholder {
-    color: #9ca3af;
 }
 
 input:focus {
@@ -170,32 +149,21 @@ button {
     font-weight: 700;
 
     cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        transform 0.1s ease;
-}
-
-button:active:not(:disabled) {
-    transform: scale(0.99);
 }
 
 button:disabled {
     background: #9ca3af !important;
-
     color: #ffffff;
-
     cursor: not-allowed;
 }
 
 
 /* =========================
-   PRIMARY BUTTON
+   AMBIL LOKASI
    ========================= */
 
 .primary-button {
     background: #2563eb;
-
     color: #ffffff;
 }
 
@@ -238,8 +206,7 @@ button:disabled {
 
     margin-top: 18px;
 
-    border:
-        1px solid #e5e7eb;
+    border: 1px solid #e5e7eb;
 
     border-radius: 10px;
 
@@ -253,8 +220,7 @@ button:disabled {
 
     background: #f9fafb;
 
-    border-bottom:
-        1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
 
     font-size: 14px;
 
@@ -274,8 +240,7 @@ button:disabled {
 
     padding: 12px 14px;
 
-    border-bottom:
-        1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .data-row:last-child {
@@ -283,8 +248,6 @@ button:disabled {
 }
 
 .data-row span {
-    flex: 0 0 auto;
-
     color: #6b7280;
 
     font-size: 14px;
@@ -304,7 +267,7 @@ button:disabled {
 
 
 /* =========================
-   SAVE BUTTON
+   SIMPAN LOG
    ========================= */
 
 .save-button {
@@ -336,7 +299,7 @@ button:disabled {
 @media (max-width: 600px) {
 
     .container {
-        padding: 14px;
+        padding: 15px;
 
         align-items: flex-start;
     }
@@ -345,16 +308,10 @@ button:disabled {
         margin-top: 20px;
 
         padding: 22px 18px;
-
-        border-radius: 14px;
     }
 
     h1 {
         font-size: 24px;
-    }
-
-    .subtitle {
-        font-size: 13px;
     }
 
     .data-row {
@@ -365,5 +322,4 @@ button:disabled {
     .data-row strong {
         font-size: 13px;
     }
-
 }
